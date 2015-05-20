@@ -1,0 +1,105 @@
+// this is a quick write-up of an idea to do the Monkey Island Part 1 story
+// in a language that has:
+//   * mutable variables that represent state that can change without changing
+//     the progress of the story (eg. location or largosDoor)
+//   * events are objects that represent the things that happen in the story,
+//     events happen when the player does an action, events cannot be removed or
+//     modified at a later point(eg. hasBeenRobbed, ticketInLargosRoom)
+
+initialState : location := WoodtickRight
+finalState : EndMI2part1
+
+location = WoodtickRight {
+  not(hasBeenRobbed) ? walkto(path)
+          >> hasBeenRobbed ! {"Largo take your riches."}
+  not(hasBeenRobbed) ? walkto(bridge)
+          >> hasBeenRobbed ! {"Largo take your riches."}
+  hasBeenRobbed ? walkto(path)
+          ! {location := Map; "You are now looking at the map of Scabb Island"}
+  hasBeenRobbed ? walkto(bridge)
+          ! {location := WoodtickLeft; "You are among several ships"}
+}
+
+// WoodtickLeft
+
+location = WoodtickLeft
+ { largoHasDirtyShirt ? walkTo(laundry)
+          >> ticketInLargosRoom, largosShirtWasCleaned ! {location:= Laundry}
+   not(largoHasDirtyShirt) ? walkTo(laundry)
+          ! {location := Laundry; "You are at the laundry."}
+  walkTo(wallyDoor)
+          ! {location := WallysShip; "You enter the cartographers ship"}
+  walkTo(window)
+          ! {location := Kitchen; "You jump through the window very elegantly and fall into the kitchen of the Bloddylips Inn"}
+  walkTo(hatch)
+          ! {location := BloodyLips; ""}
+  walkTo(woodenDoor)
+          ! {location := Woodsmith; ""}
+  walkTo(innDoor)
+          ! {location := Inn; ""}
+  walkTo(bridge)
+          ! {location := WoodtickRight; ""}
+ }
+
+// Inn
+location = Inn
+  {
+  walkTo(doorway) ! {location := WoodtickLeft}
+  hasKnife, aligatorTiedWithRope ? use(knife, rope) >>
+    aligatorHasRunAway, innKeeperIsChasingAligator !
+    {"You cut the rope holding the Alligator. It runs out closely chased by the innkeeper"}
+  aligatorHasRunAway, cheeseSquigglesInInn ? pickUp(cheeseSq) >>
+    playerHasCheeseSq ! {"You pick up delicious cheese squiggles"}
+  largoDoor = Closed, innKeeperIsChasingAligator ? open(largoDoor) !
+    {largoDoor := Open; "The door to Largo's room is now open."}
+  largoDoor = Open {
+    walkTo(largoDoor) ! {location := LargosRoom; "You enter Largos room."}
+    close(door) ! {largoDoor := Closed; "The door to Largo's room is now closed"}
+  }
+}
+
+location = LargosRoom
+  {
+    pickUp(toupee) >> playerHasToupee ! {"You picked up Largos toupee."}
+    largoDoor = Open {
+      close(door) ! {largoDoor := Closed; "The door closes -- almost"}
+      walkTo(door) >> {location := Inn}
+    }
+    largoDoor = Closed {
+      playerHasBucketOfMud ?
+        use(bucket, door) >> largoHasDirtyShirt, playerHasEmptiedBucket
+          ! {"You put the bucket'o'mud on the top of the door. Largo enters and the bucket ends up on his head. Very funny."}
+      open(door) >> {largoDoor := Open}
+      ticketIsInLargosRoom ? pickUp(ticket) >> playerHasTicket
+        ! {"You got the cleaning ticket for Largo's clothes"}
+    }
+    largoEmbargoEnforced, playerHasDoll, playerHasPins ?
+      use(pins, doll) >> largoEmbargoLifted !
+        { location := VoodooShack;
+         "You quickly stap the doll with the pins. Largo is clearly upset and leaves Scapp Island. You are now back at the voodoo schack"}
+  }
+
+location = LaundryShip
+  {
+    not(hatchSticked), hatch = Open ?
+      walkTo(path) >> {location := WoodtickLeft; hatch := closed}
+    // notice this rule combines two rules of the old language
+    walkTo(path) >> {location := WoodtickLeft}
+    playerHasTicket & not(playerHasBra) ? give(ticket, laundryGuy) >> playerHasBra
+    hatch = Closed ? open(hatch) >> {hatch := Open}
+    hatch = Open {
+      not(hatchSticked) {
+        playerHasCheeseSq ? use(cheeseSq, hatch) >> cheeseSquigglesInBox
+                                                 ! {hatch := Closed}
+        // notice the stick is not explicitly taken out of the inventory
+        playerHasStick ? use(stick, hatch) >> hatchSticked
+      }
+      hatchSticked {
+        playerHasCheeseSq ? use(cheeseSq, hatch) >>
+          cheeseSquigglesInBox, ratInBox
+        playerHasString ? >> use(string, stick) >> hatchStringed
+      }
+      ratInBox & hatchStringed ? pull(string) >> ratTrapped ! {hatch := Closed}
+      ratTrapped ? pickUp(rat) >> playerHasRat ! {hatch := Closed}
+    }
+  }
