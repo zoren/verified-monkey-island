@@ -1,7 +1,15 @@
 -- A comment is a line prefixed with '--'
--- general rule
+-- general rules
+Rule Useable(x,y,d)
+   {x.loc = Inv, y.loc = player.loc} ? use(x, y) >> d
+   {y.loc = Inv, x.loc = player.loc} ? use(x, y) >> d
+   {x.loc = Inv, y.loc = Inv} ? use(x, y) >> d
+   --{y.loc = player.loc, x.loc = player.loc} ? use(x, y) >> {d}
+
 Rule Pickupable(x)
   {x.loc != Inv, x.loc = player.loc} ? pickUp(x) >> {x.loc := Inv} & {"You pick up an item"}
+
+Story MI2part1
 
 -- initial state
 
@@ -48,9 +56,6 @@ Initial {
   stick.loc := Beach 
 }
 
-Completion {
-  charterDreadsShip
-}
 
 -- game story rules structured by locations
 Location WoodtickRight
@@ -128,7 +133,7 @@ Locals {door}
                        & {"You quickly stap the doll with the pins. Largo is clearly upset and leaves Scapp Island. You are now back at the voodooschack"}
 
 Location LaundryShip
-Locals {laundyGuy, path}
+Locals {laundryGuy, path}
   { not(hatch.sticked), hatch = Open} ? walkto(path) >> {player.loc := WoodtickLeft; hatch := Closed} 
                                         & {"You hear the hatch close as you go back to the several-ships place"}
   { hatch.sticked } ? walkto(path) >> { player.loc := WoodtickLeft } & {"You are among several ships"}
@@ -136,7 +141,7 @@ Locals {laundyGuy, path}
 
 
   { ticket.loc = Inv} ? 
-    give(ticket, laundyGuy) >> {ticket.loc := Undefined; bra.loc := Inv} 
+    give(ticket, laundryGuy) >> {ticket.loc := Undefined; bra.loc := Inv} 
                                & {"You give the ticket to the deaf laundry guy. You now have Largo's bra!"}
   
   { hatch = Closed } ? open(hatch) >> { hatch := Open } & {"You hold the hatch open"}
@@ -216,7 +221,7 @@ Locals {bartender, doorway, kitchendoor}
 Location Kitchen
 Locals {window, door, stew}
    Pickupable(knife)
-   { rat.loc = Inv } ? use(rat, stew) >> {rat.loc := Vichyssoise} & {"You put the rat in the Vichyssoise"}
+   Useable(rat, stew, {rat.loc := Vichyssoise})
    walkto(window) >> { player.loc := WoodtickLeft } & {"You crawl out the window. You are among several ships"}
    walkto(door)   >> { player.loc := BloddyLips } & {"You enter the BloddyLips from the kitchen"}
 
@@ -260,7 +265,7 @@ Locals {coffinpath, lady}
 
 Location Swamp
 Locals {coffin, swamp, path}
-  {bucket.loc = Inv} ? use(bucket, swamp) >> {bucket.cont := Mud, swamp.loc := Undefined} & {"You fill up the bucket with mud."}
+  Useable(bucket, swamp, {bucket.cont := Mud, swamp.loc := Undefined})
   use(coffin) >> { player.loc := Coffin } & {"You enter the coffin. You can now row around in the swamp."}
 
   walkto(path) >> { player.loc := Map } & {"You are looking at the map of Scabb island"}
@@ -277,8 +282,7 @@ Locals {path, graves}
 
 Location Graves
 Locals {largosgrave, cemetery}
-  { shovel.loc = Inv } ?
-    use(shovel, largosgrave) >> { bones.loc := Inv,largosgrave.loc := Undefined } & { "You dig up bones from Largo's grave." }
+  Useable(shovel,largosgrave, {bones.loc := Inv,largosgrave.loc := Undefined})
   walkto(cemetery) >> { player.loc := Cemetery } & {"You are at the cemetery"}
 
 Location Peninsula
@@ -291,7 +295,7 @@ Locals {dread, path}
   { monocle.loc = Inv } ? 
     give(monocle,dread) >> { monocle.loc := Dread } & {"You give the monocle to Dread. He is happy to have found a new lucky charm"}
   { money != None, largoembargo = Alleviated, monocle.loc = Dread } ? 
-    talkto(dread, charterShip) >> {money := Money400; charterDreadsShip} & {"You charter Dread's ship"}
+    talkto(dread, charterShip) >> {money := Money400; End MI2part1} & {"You charter Dread's ship"}
   walkto(path) >> { player.loc := Peninsula } & {"You are now just outside Dread's houseboat"}
 
 Location Beach
