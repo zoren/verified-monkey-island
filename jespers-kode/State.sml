@@ -26,8 +26,8 @@ struct
   fun ppval (I i) = ppnum i
     | ppval (C c) = ppconst c
     | ppval U = "Undefined"
-  fun ppbinding (name, v) = (ppname name) ^ " --> " ^ ppval v
-  fun ppstate s = "T = { " ^ concatWith ", " (map ppbinding s) ^ " }\n"
+  fun ppbinding (name, v) = (ppname name) ^ " := " ^ ppval v
+  fun ppstate s = "Initial { " ^ concatWith ",\n" (map ppbinding s) ^ " }\n"
 
 
     

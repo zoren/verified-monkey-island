@@ -175,8 +175,8 @@ end
     val globalInitialBindings = 
       (*(str2name storyName, *)
       (*Core.EV (State.constConst  "False")) ::*)
-      (itemLocations @ 
-        (map (fn ((x,y),z) => idUpdate [] "Global" ((x,y),z)) initialBindings))
+       (*(  itemLocations @ *)
+        ((map (fn ((x,y),z) => idUpdate [] "Global" ((x,y),z)) initialBindings))
     
     fun evalloc (EV v) = v
       | evalloc _ = raise Fail "Not implemented : evalloc"
