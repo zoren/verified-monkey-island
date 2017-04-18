@@ -1,14 +1,11 @@
 
-SRCS := Bddutils.sig Bddutils.sml Gcl.sml EParser.sml ELexer.sml ESyntax.sml Extended.sml Core.sml #State.sml# StateSet.sml
+SRCS := State.sml EParser.sml ELexer.sml ESyntax.sml Extended.sml Core.sml # StateSet.sml
 OBJS := $(SRCS:.sml=.ui) $(SRCS:.sml=.uo)
 
 ISRCS := ESyntax.sml Core.sml E2C.sml Interpreter.sml
 IOBJS := $(ISRCS:.sml=.ui) $(IRSC:.sml=.uo)
 
-all : Bddutils Extended Interpreter Analysis
-
-Bddutils:
-	mosmlc -c -I ${MUDDYHOME} Bddutils.sig
+all : Extended Interpreter
 
 Interpreter: $(IOBJS)
 	mosmlc -o Interpreter Interpreter.sml
@@ -19,9 +16,6 @@ E2C: $(IOBJS)
 Extended : $(OBJS)
 	mosmlc -o Extended Extended.sml
 
-Analysis : $(OBJS) SharedNodeStateSet.ui
-	mosmlc -o Analysis -I $(MUDDYHOME)  Gcl.uo Analysis.sml
-
 ELexer.sml : ELexer.lex ESyntax.sml 
 	mosmllex ELexer.lex
 
@@ -31,6 +25,8 @@ EParser.sml EParser.sig : EParser.grm ESyntax.sml
 	mosmlyac -v EParser.grm
 
 ELexer.uo : EParser.sig
+ELexer.ui : ELexer.sml EParser.uo
+	mosmlc ELexer.sml
 
 %.uo %.ui : %.sml 
 	mosmlc -c -I $(MUDDYHOME) $*.sml
@@ -38,10 +34,13 @@ ELexer.uo : EParser.sig
 EParser.ui : EParser.sig
 	mosmlc -c $^
 
+EParser.uo : EParser.sml
+	mosmlc EParser.sml
+
 EParser.ui : ESyntax.ui
 
-State.uo : 
-	mosmlc -c -toplevel  
+State.ui : 
+	mosmlc State.sml
 
 Core.ui :   State.ui ESyntax.ui
 	mosmlc -c  Core.sml
