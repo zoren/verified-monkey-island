@@ -26,7 +26,7 @@ EParser.sml EParser.sig : EParser.grm ESyntax.sml
 
 ELexer.uo : EParser.sig
 ELexer.ui : ELexer.sml EParser.uo
-	mosmlc ELexer.sml
+	mosmlc -c ELexer.sml
 
 %.uo %.ui : %.sml 
 	mosmlc -c -I $(MUDDYHOME) $*.sml
@@ -35,12 +35,12 @@ EParser.ui : EParser.sig
 	mosmlc -c $^
 
 EParser.uo : EParser.sml
-	mosmlc EParser.sml
+	mosmlc -c EParser.sml
 
 EParser.ui : ESyntax.ui
 
 State.ui : 
-	mosmlc State.sml
+	mosmlc -c State.sml
 
 Core.ui :   State.ui ESyntax.ui
 	mosmlc -c  Core.sml
