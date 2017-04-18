@@ -1,11 +1,5 @@
 -- A comment is a line prefixed with '--'
--- general rules
-Rule Useable(x,y,d)
-   {x.loc = Inv, y.loc = player.loc} ? use(x, y) >> d
-   {y.loc = Inv, x.loc = player.loc} ? use(x, y) >> d
-   {x.loc = Inv, y.loc = Inv} ? use(x, y) >> d
-   --{y.loc = player.loc, x.loc = player.loc} ? use(x, y) >> {d}
-
+-- general rule
 Rule Pickupable(x)
   {x.loc != Inv, x.loc = player.loc} ? pickUp(x) >> {x.loc := Inv} & {"You pick up an item"}
 
@@ -222,7 +216,7 @@ Locals {bartender, doorway, kitchendoor}
 Location Kitchen
 Locals {window, door, stew}
    Pickupable(knife)
-   Useable(rat, stew, {rat.loc := Vichyssoise})
+   { rat.loc = Inv } ? use(rat, stew) >> {rat.loc := Vichyssoise} & {"You put the rat in the Vichyssoise"}
    walkto(window) >> { player.loc := WoodtickLeft } & {"You crawl out the window. You are among several ships"}
    walkto(door)   >> { player.loc := BloddyLips } & {"You enter the BloddyLips from the kitchen"}
 
@@ -266,7 +260,7 @@ Locals {coffinpath, lady}
 
 Location Swamp
 Locals {coffin, swamp, path}
-  Useable(bucket, swamp, {bucket.cont := Mud, swamp.loc := Undefined})
+  {bucket.loc = Inv} ? use(bucket, swamp) >> {bucket.cont := Mud, swamp.loc := Undefined} & {"You fill up the bucket with mud."}
   use(coffin) >> { player.loc := Coffin } & {"You enter the coffin. You can now row around in the swamp."}
 
   walkto(path) >> { player.loc := Map } & {"You are looking at the map of Scabb island"}
@@ -283,7 +277,8 @@ Locals {path, graves}
 
 Location Graves
 Locals {largosgrave, cemetery}
-  Useable(shovel,largosgrave, {bones.loc := Inv,largosgrave.loc := Undefined})
+  { shovel.loc = Inv } ?
+    use(shovel, largosgrave) >> { bones.loc := Inv,largosgrave.loc := Undefined } & { "You dig up bones from Largo's grave." }
   walkto(cemetery) >> { player.loc := Cemetery } & {"You are at the cemetery"}
 
 Location Peninsula
