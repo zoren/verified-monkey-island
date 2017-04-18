@@ -9,8 +9,6 @@ Rule Useable(x,y,d)
 Rule Pickupable(x)
   {x.loc != Inv, x.loc = player.loc} ? pickUp(x) >> {x.loc := Inv} & {"You pick up an item"}
 
-Story MI2part1
-
 -- initial state
 
 Initial { 
@@ -56,6 +54,9 @@ Initial {
   stick.loc := Beach 
 }
 
+Completion {
+  charterDreadsShip
+}
 
 -- game story rules structured by locations
 Location WoodtickRight
@@ -295,7 +296,7 @@ Locals {dread, path}
   { monocle.loc = Inv } ? 
     give(monocle,dread) >> { monocle.loc := Dread } & {"You give the monocle to Dread. He is happy to have found a new lucky charm"}
   { money != None, largoembargo = Alleviated, monocle.loc = Dread } ? 
-    talkto(dread, charterShip) >> {money := Money400; End MI2part1} & {"You charter Dread's ship"}
+    talkto(dread, charterShip) >> {money := Money400; charterDreadsShip} & {"You charter Dread's ship"}
   walkto(path) >> { player.loc := Peninsula } & {"You are now just outside Dread's houseboat"}
 
 Location Beach
