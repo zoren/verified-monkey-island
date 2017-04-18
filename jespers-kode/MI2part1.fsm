@@ -1,7 +1,4 @@
 -- A comment is a line prefixed with '--'
--- general rule
-Rule Pickupable(x)
-  {x.loc != Inv, x.loc = player.loc} ? pickUp(x) >> {x.loc := Inv} & {"You pick up an item"}
 
 Story MI2part1
 
@@ -54,7 +51,7 @@ Initial {
 -- game story rules structured by locations
 Location WoodtickRight
 Locals {path, bridge}
-  Pickupable(shovel)
+  {shovel.loc = WoodtickRight} ? pickUp(shovel) >> {shovel.loc := Inv} & {"You pick up a shovel"}
   {not(hasbeenrobbed) } ? {
     walkto(path)      >> { riches.loc := Undefined; hasbeenrobbed } & {"Largo comes and take your riches"}
     walkto(bridge)    >> { riches.loc := Undefined; hasbeenrobbed } & {"Largo comes and take your riches"}
@@ -106,7 +103,7 @@ Locals {rope, alligator, innkeeper, door, doorway}
 
 Location Largosroom
 Locals {door}
-  Pickupable(toupee)
+  { toupee.loc = Largosroom } ? pickUp(toupee) >> {toupee.loc := Inv} & {"You pick up Largos toupee"}
   { ldoor = Open } ? { 
     close(door) >> { ldoor := Closed } & {"The door closes -- almost"}
     walkto(door) >> { player.loc := Inn } & {"You are back in the inn"}
@@ -184,8 +181,8 @@ Locals {laundryGuy, path}
 
 Location WallysShip
 Locals {door, wally}
-  Pickupable(paper)
-  Pickupable(monocle)
+  { paper.loc = WallysShip } ? pickUp(paper) >> {paper.loc := Inv} & {"You pick up an piece of paper"}
+  { monocle.loc = WallysShip } ? pickUp(monocle) >> {monocle.loc := Inv} & {"You steal Wally's monocle"}
   { monocle.loc = Inv } ?
     give(monocle,wally) >> { monocle.loc := WallysShip } & {"You give back the monocle to Wally. Poor guy."}
 
@@ -214,7 +211,7 @@ Locals {bartender, doorway, kitchendoor}
 
 Location Kitchen
 Locals {window, door, stew}
-   Pickupable(knife)
+   { knife.loc = Kitchen } ? pickUp(knife) >> {knife.loc := Inv} & {"You take the chef's knife"}
    { rat.loc = Inv } ? use(rat, stew) >> {rat.loc := Vichyssoise} & {"You put the rat in the Vichyssoise"}
    walkto(window) >> { player.loc := WoodtickLeft } & {"You crawl out the window. You are among several ships"}
    walkto(door)   >> { player.loc := BloddyLips } & {"You enter the BloddyLips from the kitchen"}
@@ -228,7 +225,7 @@ Locals {coffinpath, lady}
   
   walkto(coffinpath) >> { player.loc := Coffin } & {"You enter the coffin"}
   
-  Pickupable(string)
+  { string.loc = VoodooShack } ? pickUp(string) >> {string.loc := Inv} & {"You pick up a piece of string"}
 
 
   { shoppinglist.loc != Inv} ?
@@ -295,7 +292,7 @@ Locals {dread, path}
 
 Location Beach
 Locals {path}
-  Pickupable(stick)
+  { stick.loc = Beach } ? pickUp(stick) >> {stick.loc := Inv} & {"You pick up a stick"}
   walkto(path) >> { player.loc := Map } & {"You are looking at the map of Scabb island"}
 
 Location Map
