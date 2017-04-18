@@ -78,7 +78,7 @@ type value = State.value
   (* pretty printing a game rule *)
   fun pprule' i (ARule (a, ds, NOP)) = (spaces i) ^ ppact a ^ " >> " ^ ppupdatelist ds ^ ""
     | pprule' i (ARule (a, ds, PRINT s)) = (spaces i) ^ ppact a ^
-    ">>" ^ ppupdatelist ds ^ " & { " ^ s ^ " }"
+    " >> " ^ ppupdatelist ds ^ " & { " ^ s ^ " }"
     | pprule' i (PRule(ps, rules)) =
       (spaces i) ^ ppprelist ps ^ " ? \n" ^ (concatWith "\n" (map (pprule' (i + 1)) rules))
   end
