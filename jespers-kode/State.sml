@@ -24,7 +24,7 @@ struct
   fun ppnum i = Int.toString i
   fun ppconst c = c
   fun ppval (I i) = ppnum i
-    | ppval (C c) = "C" ^ ppconst c
+    | ppval (C c) = ppconst c
     | ppval U = "Undefined"
   fun ppbinding (name, v) = (ppname name) ^ " --> " ^ ppval v
   fun ppstate s = "T = { " ^ concatWith ", " (map ppbinding s) ^ " }\n"

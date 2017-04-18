@@ -37,7 +37,10 @@ type value = State.value
   datatype sideeffect = NOP | PRINT of string
 
 
-  datatype rule = Rule of precondition list * action * update list * sideeffect
+  datatype rule = ARule of action * update list * sideeffect
+                | PRule of precondition list * rule list
+
+  fun Rule (ps, action, updates, sideeffect) = PRule(ps, [ARule(action, updates, sideeffect)])
   type story = rule list			  
 
   (* pretty printing preconditions *)
@@ -59,7 +62,7 @@ type value = State.value
 
   fun pppre (Pre (x, vo, y)) = ppexp x ^ ppop vo ^ ppexp y
 
-  fun ppprelist pl = "{" ^ concatWith ", " (map pppre pl) ^ "}"
+  fun ppprelist pl = "{ " ^ concatWith ", " (map pppre pl) ^ " }"
 
   (* pretty printing actions *)
   fun ppactname an = an
@@ -69,11 +72,18 @@ type value = State.value
   fun ppupdate (x, e) = ppname x ^ ":=" ^ ppexp e
   fun ppupdatelist ul = "{" ^ concatWith "; " (map ppupdate ul) ^ "}"
 
+  fun spaces 0 = ""
+    | spaces i = "    " ^ (spaces (i - 1))
+
   (* pretty printing a game rule *)
-  fun pprule (Rule (ps, a, ds, NOP)) = "(" ^ ppprelist ps ^ "? " ^ ppact a ^ ">>" ^ ppupdatelist ds ^ ")"
-    | pprule (Rule (ps, a, ds, PRINT s)) = "(" ^ ppprelist ps ^ "? " ^ ppact a ^
-    ">>" ^ ppupdatelist ds ^ "," ^ s ^ ")"
+  fun pprule' i (ARule (a, ds, NOP)) = (spaces i) ^ ppact a ^ " >> " ^ ppupdatelist ds ^ ""
+    | pprule' i (ARule (a, ds, PRINT s)) = (spaces i) ^ ppact a ^
+    ">>" ^ ppupdatelist ds ^ " & { " ^ s ^ " }"
+    | pprule' i (PRule(ps, rules)) =
+      (spaces i) ^ ppprelist ps ^ " ? \n" ^ (concatWith "\n" (map (pprule' (i + 1)) rules))
   end
+
+  fun pprule rule = pprule' 0 rule
 
   (* evaluation of an expression exp to a value in state state *)
   fun evalexp state exp = 
@@ -124,10 +134,14 @@ type value = State.value
   (* function that given a state, rule, and action returns SOME(upd) if the
   * preconditions for the action are meet and the rule-action corresponds to
   * the given action *)
-  fun isEnabled state (Rule (ps, a, upd, _)) act = 
-      if satlist state ps andalso act = a
-      then SOME upd
-      else NONE
+  fun isEnabled state (act:action) (PRule (ps, rules)) = 
+      if satlist state ps
+      then List.concat (map (isEnabled state act) rules)
+      else []
+    | isEnabled state act (ARule (a, updates, _)) =
+      if act = a
+      then [updates]
+      else []
 
   (* function that given a list of rules, a state and action returns the list
   * of all possible state updates based on the given state and action; if the
@@ -136,13 +150,10 @@ type value = State.value
   * 1) the action given never matched any specified in the rules 
   * 2) the preconditions were not met.
   *)
-  fun findEnabled (state, rules) act =
+  fun findEnabled (state, rules: rule list) act =
   let
       val choices =
-	  foldl (fn (r, enabled) => case isEnabled state r act of
-                                   NONE => enabled
-                                 | SOME u => u :: enabled
-    ) [] rules
+	  foldl (fn (r, enabled) => (isEnabled state act r) @ enabled) [] rules
   in
     rev choices
   end
@@ -152,10 +163,16 @@ type value = State.value
   *)
   fun findEnabledActions (state, rules) =
   let val choices =
-    foldl (fn (Rule(pres,a,_,_), actions) => 
-      if satlist state pres andalso not(List.exists (fn x=>a=x) actions)
-      then a :: actions
-      else actions
+    foldl (fn (rule, actions) => 
+      case rule of
+      ARule(a,_,_) =>
+        if not(List.exists (fn x=>a=x) actions)
+        then a :: actions
+        else actions
+      | PRule(pres, rules) =>
+        if satlist state pres
+        then findEnabledActions (state, rules) @ actions
+        else actions      
     ) [] rules
   in
     rev choices
@@ -166,10 +183,16 @@ type value = State.value
   *)
   fun findEnabledActionsEffects (state, rules) =
   let val choices =
-    foldl (fn (Rule(pres,a,_,se), actions) => 
-      if satlist state pres andalso not(List.exists (fn (x,_)=>a=x) actions)
-      then (a, se) :: actions
-      else actions
+    foldl (fn (rule, actions) => 
+      case rule of
+      ARule(a,_,se) =>
+        if not(List.exists (fn (x,_)=>a=x) actions)
+        then (a, se) :: actions
+        else actions
+      | PRule(pres, rules) =>
+        if satlist state pres
+        then findEnabledActionsEffects (state, rules) @ actions
+        else actions
     ) [] rules
   in
     rev choices
@@ -180,7 +203,7 @@ type value = State.value
   * First check to see if the state satisfies the "story completed" condition
   * and if that is the case, step acts as the identity function.
    *)
-  fun step phi (state,rules) act = 
+  fun step phi (state,rules: rule list) act = 
     (*if sat state phi*)
     (*then state*)
     (*else*)

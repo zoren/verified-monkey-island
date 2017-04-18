@@ -7,9 +7,7 @@ val constConst = State.constConst
 
 
 
-fun genLocName items loc name = if List.exists (fn x => x = name) items
-                                then loc ^ "/" ^ name
-                                else name
+fun genLocName items loc name = name
 val ## = genLocName
 
 fun str2name str = Core.constName str
@@ -50,25 +48,17 @@ local
   open ESyntax
 in
 fun transERule items loc (ARule(action, updates, se)) = 
-    [Core.Rule(
-      [],
+    [Core.ARule(
       idAction items loc action,
       map (idUpdate items loc) updates, 
       idSideEffect se)]
   | transERule items loc (PRule(preconds, [])) = raise Fail "Parse error no action"
   | transERule items loc (PRule(preconds, [SRule(action, name)])) = raise Fail "SRule, should not happen?"
-  | transERule items loc (PRule(preconds, [ARule(action, updates, se)])) =
-    [Core.Rule (
-      map (idPrecond items loc) preconds,
-      idAction items loc action,
-      map (idUpdate items loc) updates, 
-      idSideEffect se)]
-  | transERule items loc (PRule(p1, [PRule(p2,l)])) = 
-     transERule items loc (PRule(p1 @ p2,l)) 
   | transERule items loc (PRule(preconds, erules)) =
-    List.concat(map 
-      (transERule items loc) 
-      (map (fn erule =>(PRule(preconds,[erule]))) erules))
+    [Core.PRule(
+      map (idPrecond items loc) preconds,
+      List.concat(map (transERule items loc) erules)
+    )]
   | transERule _ _ _ = raise Fail "transERule match"
 
 fun transMRule items loc (ERule erule) = transERule items loc erule
@@ -152,21 +142,19 @@ fun transLocDef metas (locationName, items, mrules) =
         (MetaRuleInst (mn, ars), insRs) => (metas mn ars) @ insRs |
         (x, insRs) => x :: insRs) [] mrules
       (* prefix all rules with player.loc = locationName *)
-      val mrules' = map (fn (ERule erule) => 
+      val mrules' =
       ESyntax.ERule(
         PRule(
          [ESyntax.Pre(
             EID("player", SOME "loc"),
             ESyntax.EQ,ESyntax.EV(ESyntax.C locationName))]
 	      ,
-        [erule]
+        map (fn (ERule erule) => erule) instarules
        )
        )
-      | _ => raise Fail "transLocDef: this shouldn't happen")
-      instarules
     in
       (* translate the expanded and slightly transformed mrules' *)
-      List.concat (map (transMRule items locationName) mrules')
+      ((transMRule items locationName) mrules')
     end
 end
 
@@ -228,8 +216,10 @@ end
 
       fun collectUpdateList (ul,acc) = foldr collectUpdate acc ul
 
-      fun collectRule (Rule(pre,a,ul,_),acc) =
-        collectPreList(pre,collectAction(a,collectUpdateList(ul,acc)))
+      fun collectRule (PRule(pre, rules),acc) =
+          collectPreList(pre, foldr collectRule acc rules)
+        | collectRule (ARule(a, ul, _),acc) =
+          collectAction(a,collectUpdateList(ul,acc))
 
       fun collectRuleList rulelist = foldr collectRule ([],[]) rulelist
       fun removeDups l =

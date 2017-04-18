@@ -14,7 +14,7 @@ E2C: $(IOBJS)
 	mosmlc -o E2c E2C.sml
 
 Extended : $(OBJS)
-	mosmlc -o Extended Extended.sml
+	mosmlc -c Extended.sml
 
 ELexer.sml : ELexer.lex ESyntax.sml 
 	mosmllex ELexer.lex
@@ -48,7 +48,7 @@ Core.ui :   State.ui ESyntax.ui
 ESyntax.ui :   State.ui
 	mosmlc -c ESyntax.sml
 
-E2C.ui : State.uo Core.ui 
+E2C.ui : State.uo Core.ui E2C.sml
 	mosmlc -c   E2C.sml
 
 # StateIntInt.ui : State.ui

@@ -102,6 +102,8 @@ struct
   val (_, story_name, _, _) = ext_story
   val (initial_state, core_rules) = (* (Core.s0, [Core.rtest1, Core.rtest2]) *)
       E2C.transE2C ext_story
+  val _ = print (String.concatWith "\n" (map Core.pprule core_rules))
+  val _ = print "\n"
   fun go () = ((
     output welcometext;
     output ("Script ["^ script_name ^"/"^ story_name ^"]\n");
