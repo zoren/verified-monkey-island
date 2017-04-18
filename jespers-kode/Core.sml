@@ -60,7 +60,7 @@ type value = State.value
     (*| ppexp (EOP (ESUB, [e1, e2])) = ppexp e1 ^ "-" ^ ppexp e2*)
     | ppexp _ = raise Fail "ppexp mismatch"
 
-  fun pppre (Pre (x, vo, y)) = ppexp x ^ ppop vo ^ ppexp y
+  fun pppre (Pre (x, vo, y)) = ppexp x ^ " " ^ ppop vo ^ " " ^ ppexp y
 
   fun ppprelist pl = "{ " ^ concatWith ", " (map pppre pl) ^ " }"
 
@@ -69,7 +69,7 @@ type value = State.value
   fun ppact (PA (an, args)) = ppactname an ^ "(" ^ concatWith ", " (map ppname args) ^ ")"
 
   (* pretty printing updates *)
-  fun ppupdate (x, e) = ppname x ^ ":=" ^ ppexp e
+  fun ppupdate (x, e) = ppname x ^ " := " ^ ppexp e
   fun ppupdatelist ul = "{" ^ concatWith "; " (map ppupdate ul) ^ "}"
 
   fun spaces 0 = ""
