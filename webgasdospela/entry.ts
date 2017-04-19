@@ -46,6 +46,8 @@ export function loadStory() {
             })
         }
         listAvailableActions();
+    }else{
+        console.log(result);
     }
 }
 
