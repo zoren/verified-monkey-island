@@ -2,6 +2,8 @@ Initial {  }
 
 { hasStarted != True } ?
     start() >> {hasStarted := True;
+            riches.loc := Inv;
+            player.loc := WoodtickRight;
             bucket.cont := Empty;
             hatch := Closed;
             job := Unavailable;
@@ -16,8 +18,6 @@ Initial {  }
             bra.loc := LaundryShip;
             bucket.loc := LaundryShip;
             rat.loc := LaundryShip;
-            riches.loc := Inv;
-            player.loc := WoodtickRight;
             shovel.loc := WoodtickRight;
             stick.loc := Beach;
             pins.loc := VoodooShack;
