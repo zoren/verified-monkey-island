@@ -22,10 +22,8 @@ Initial {  }
             rat.loc := LaundryShip;
             riches.loc := Inv;
             shovel.loc := WoodtickRight;
-            spit.loc := Undefined;
             stick.loc := Beach;
             string.loc := VoodooShack;
-            ticket.loc := Undefined;
             toupee.loc := Largosroom;
             alligator.loc := Inn;
             innkeeper.loc := Inn;
