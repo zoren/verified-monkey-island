@@ -1,6 +1,8 @@
 Initial {  }
 
-start() >> {bones.loc := Graves;
+{ hasStarted != True } ?
+    start() >> {hasStarted := True;
+            bones.loc := Graves;
             bra.loc := LaundryShip;
             bucket.cont := Empty;
             bucket.loc := LaundryShip;
