@@ -1,12 +1,5 @@
 Initial {  }
 
-start() >> {bucket.cont := Empty;
-            job := Unavailable;
-            largoembargo := Enforced;
-            ldoor := Closed;
-            money := None;
-            stick.loc := Beach}
-
 start() >> { player.loc := WoodtickRight; riches.loc := Inv; shovel.loc := WoodtickRight }
     & { "You are standing at the foot of a bridge, a shovel is tied to a sign next to you." }
 
@@ -34,7 +27,8 @@ start() >> { player.loc := WoodtickRight; riches.loc := Inv; shovel.loc := Woodt
 start() >> {alligator.loc := Inn;
             innkeeper.loc := Inn;
             cheesesq.loc := Inn;
-            rope.loc := Inn}
+            rope.loc := Inn;
+            ldoor := Closed}
 
 { player.loc = Inn } ?
     walkto(doorway) >> {player.loc := WoodtickLeft} & { "You are among several ships" }
@@ -48,7 +42,9 @@ start() >> {alligator.loc := Inn;
         walkto(door) >> {player.loc := Largosroom} & { "You enter Largo's room" }
         close(door) >> {ldoor := Closed} & { "The door to Largo's room is now closed" }
 
-start() >> {toupee.loc := Largosroom}
+start() >> {ticket.loc := Largosroom;
+            toupee.loc := Largosroom;
+            largoembargo := Enforced}
 
 { player.loc = Largosroom } ?
     { toupee.loc = Largosroom } ?
@@ -68,6 +64,7 @@ start() >> {toupee.loc := Largosroom}
 start() >> {hatch := Closed;
             bra.loc := LaundryShip;
             bucket.loc := LaundryShip;
+            bucket.cont := Empty;
             rat.loc := LaundryShip}
 
 { player.loc = LaundryShip } ?
@@ -141,7 +138,8 @@ start() >> {polish.loc := Woodsmith}
 
 { player.loc = Woodsmith } ?
     walkto(path) >> {player.loc := WoodtickLeft} & { "You are among several ships" }
-    pickUp(polish) >> {polish.loc := Inv} & { "You pick up a can of wood polish" }
+    { polish.loc = Woodsmith } ?
+        pickUp(polish) >> {polish.loc := Inv} & { "You pick up a can of wood polish" }
 
 start() >> {pins.loc := VoodooShack;
             doll.loc := VoodooShack;
@@ -195,9 +193,11 @@ start() >> {bones.loc := Graves}
 { player.loc = Dreadsship } ?
     { monocle.loc = Inv } ?
         give(monocle, dread) >> {monocle.loc := Dread} & { "You give the monocle to Dread. He is happy to have found a new lucky charm" }
-    { money != None, largoembargo = Alleviated, monocle.loc = Dread } ?
+    { money = Money420, largoembargo = Alleviated, monocle.loc = Dread } ?
         talkto(dread, charterShip) >> {money := Money400} & { "You charter Dread's ship" }
     walkto(path) >> {player.loc := Peninsula} & { "You are now just outside Dread's houseboat" }
+
+start() >> {stick.loc := Beach}
 
 { player.loc = Beach } ?
     { stick.loc = Beach } ?
