@@ -174,7 +174,7 @@ rope.loc := Inn }
         talkto(lady, escapeLargo) >> {bigWhoopBook.loc := Inv} & { "The lady tells you that you can escape Largo by finding Big Whoop. You get a book about it." }
 
 { player.loc = Swamp } ?
-    { bucket.loc = Inv } ?
+    { bucket.loc = Inv, bucket.cont = Empty } ?
         use(bucket, swamp) >> {bucket.cont := Mud; swamp.loc := Undefined} & { "You fill up the bucket with mud." }
     use(coffin) >> {player.loc := Coffin} & { "You enter the coffin. You can now row around in the swamp." }
     walkto(path) >> {player.loc := Map} & { "You are looking at the map of Scabb island" }
