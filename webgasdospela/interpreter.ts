@@ -18,13 +18,13 @@ function evalComp(compOp: lang.ComparisonOperator){
 }
 
 export function getAvailableActionRules(state: State, rules: lang.Rule[]): lang.ARule[] {
-    let get = (id: string) => { let v = state.get(id); if (v === undefined) { throw new Error(`identifier ${id} was not defined`); } return v; }
+    let get = (id: string) => { let v = state.get(id); if (v === undefined) { return undefined; } return v.value; }
     function evalCond(cond: lang.Condition) {
-        let evalExp = (e: lang.Expression) => e instanceof lang.Constant ? e : get(e.name);
+        let evalExp = (e: lang.Expression) => e instanceof lang.Constant ? e.value : get(e.name);
         let vl = evalExp(cond.expl);
         let vr = evalExp(cond.expr);
         let f = evalComp(cond.compOperator);
-        return f(vl.value, vr.value);
+        return f(vl, vr);
     }
 
     function getAvailableActions(rule: lang.Rule): lang.ARule[] {
