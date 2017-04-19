@@ -11,6 +11,7 @@ export function loadStory() {
 
         let current = <HTMLDivElement>document.getElementById("current-message");
         let availableActions = <HTMLDivElement>document.getElementById("available-actions");
+        let inventory = <HTMLDivElement>document.getElementById("inventory");
         let handler = (se: lang.SideEffect) => {if(se){current.innerText = se.printText;}}
         let rules = Array.from(s.rules);
         let listAvailableActions = () => {
@@ -23,6 +24,14 @@ export function loadStory() {
                 availableActions.appendChild(button);
                 availableActions.appendChild(document.createElement("br"));
             });
+            inventory.innerHTML = "";
+            state.forEach((v, k) => {
+                if (v.value === "Inv") {
+                    let e = document.createElement("div");
+                    e.innerText = k.endsWith(".loc") ? k.substr(0, k.length - 4) : k;
+                    inventory.appendChild(e);
+                }
+            })
         }
         listAvailableActions();
     }
