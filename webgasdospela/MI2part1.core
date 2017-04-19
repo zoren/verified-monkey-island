@@ -92,6 +92,8 @@ Initial {  }
             use(stick, hatch) >> {hatch.sticked := True; stick.loc := LaundryShip} & { "The hatch is now held open by the stick." }
         { hatch.sticked = True, cheesesq.loc = Inv } ?
             use(cheesesq, hatch) >> {cheesesq.loc := LaundryShip; rat.inbox := True} & { "You put the cheese squiggles into the box. The rat enters the box." }
+    { polish.loc = Inv } ?
+        use(polish, molmf) >> {polish.loc := Undefined}  & { "You give your can of wood polish to a Man of low moral fiber, who has a wooded leg." }
     { bucket.loc = LaundryShip } ?
         { tried != True } ?
             trypickUp(bucket) >> {tried := True} & { "You try to pick up the bucket, but the men of low moral fiber tell you not to pick up the bucket" }
@@ -139,6 +141,7 @@ Initial {  }
 
 { player.loc = Woodsmith } ?
     walkto(path) >> {player.loc := WoodtickLeft} & { "You are among several ships" }
+    pickUp(polish) >> {polish.loc := Inv} & { "You pick up a can of wood polish" }
 
 { player.loc = VoodooShack } ?
     walkto(coffinpath) >> {player.loc := Coffin} & { "You enter the coffin" }
