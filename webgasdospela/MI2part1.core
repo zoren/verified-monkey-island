@@ -37,7 +37,8 @@ ticket.loc := Undefined,
 toupee.loc := Largosroom,
 tried := False,
 alligator.loc := Inn,
-innkeeper.loc := Inn }
+innkeeper.loc := Inn,
+rope.loc := Inn }
 
 { player.loc = WoodtickRight } ?
     { shovel.loc = WoodtickRight } ?
@@ -188,7 +189,7 @@ innkeeper.loc := Inn }
 
 { player.loc = Graves } ?
     { shovel.loc = Inv } ?
-        use(shovel, largosgrave) >> {bones.loc := Inv; largosgrave.loc := Undefined} & { "You dig up bones from Largo's grave." }
+        use(shovel, largosgrave) >> {bones.loc := Inv} & { "You dig up bones from Largo's grave." }
     walkto(cemetery) >> {player.loc := Cemetery} & { "You are at the cemetery" }
 
 { player.loc = Peninsula } ?
