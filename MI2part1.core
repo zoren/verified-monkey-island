@@ -45,7 +45,7 @@ tried := False }
         walkto(bridge) >> {riches.loc := Undefined; hasbeenrobbed := True} & { "Largo comes and take your riches" }
     { hasbeenrobbed = True } ?
         walkto(path) >> {player.loc := Map} & { "You are now looking at the map of Scabb Island" }
-        walkto(bridge) >> {player.loc := WoodtickLeft} & { "You are among several ships" };
+        walkto(bridge) >> {player.loc := WoodtickLeft} & { "You are among several ships" }
 
 { player.loc = WoodtickLeft } ?
     { largohasdirtyshirt = True } ?
@@ -56,7 +56,7 @@ tried := False }
     walkto(hatch) >> {player.loc := BloddyLips} & { "You enter the BloddyLips Inn" }
     walkto(wooddoor) >> {player.loc := Woodsmith} & { "You are in the Woodsmith's place" }
     walkto(inndoor) >> {player.loc := Inn} & { "You enter the Inn. There's rumors Largo has a room here" }
-    walkto(bridge) >> {player.loc := WoodtickRight} & { "You are just outside Woodtick" };
+    walkto(bridge) >> {player.loc := WoodtickRight} & { "You are just outside Woodtick" }
 
 { player.loc = Inn } ?
     walkto(doorway) >> {player.loc := WoodtickLeft} & { "You are among several ships" }
@@ -68,7 +68,7 @@ tried := False }
         open(door) >> {ldoor := Open} & { "The door to Largo's room is now open" }
     { ldoor = Open } ?
         walkto(door) >> {player.loc := Largosroom} & { "You enter Largo's room" }
-        close(door) >> {ldoor := Closed} & { "The door to Largo's room is now closed" };
+        close(door) >> {ldoor := Closed} & { "The door to Largo's room is now closed" }
 
 { player.loc = Largosroom } ?
     { toupee.loc = Largosroom } ?
@@ -83,7 +83,7 @@ tried := False }
         { ticket.loc = Largosroom } ?
             pickUp(ticket) >> {ticket.loc := Inv} & { "You got the cleaning ticket for Largo's clothes" }
     { largoembargo = Enforced, doll.loc = Inv, pins.loc = Inv } ?
-        use(doll, pins) >> {largoembargo := Alleviated; player.loc := VoodooShack} & { "You quickly stap the doll with the pins. Largo is clearly upset and leaves Scapp Island. You are now back at the voodooschack" };
+        use(doll, pins) >> {largoembargo := Alleviated; player.loc := VoodooShack} & { "You quickly stap the doll with the pins. Largo is clearly upset and leaves Scapp Island. You are now back at the voodooschack" }
 
 { player.loc = LaundryShip } ?
     { hatch.sticked != True, hatch = Open } ?
@@ -117,7 +117,7 @@ tried := False }
         { hatch.stringed = True } ?
             pull(string) >> {string.loc := Inv; stick.loc := Inv; rat.trapped := True; hatch.sticked := False; hatch.stringed := False; hatch := Closed} & { "Bum! The hatch closes and the rat is trapped." }
     { hatch = Open, rat.trapped = True } ?
-        pickUp(rat) >> {rat.loc := Inv; rat.trapped := False; hatch := Closed} & { "You pick up the rat from the box" };
+        pickUp(rat) >> {rat.loc := Inv; rat.trapped := False; hatch := Closed} & { "You pick up the rat from the box" }
 
 { player.loc = WallysShip } ?
     { paper.loc = WallysShip } ?
@@ -126,7 +126,7 @@ tried := False }
         pickUp(monocle) >> {monocle.loc := Inv} & { "You steal Wally's monocle" }
     { monocle.loc = Inv } ?
         give(monocle, wally) >> {monocle.loc := WallysShip} & { "You give back the monocle to Wally. Poor guy." }
-    walkto(door) >> {player.loc := WoodtickLeft} & { "You are among several ships" };
+    walkto(door) >> {player.loc := WoodtickLeft} & { "You are among several ships" }
 
 { player.loc = BloddyLips } ?
     { talkedaboutLargo != True } ?
@@ -137,7 +137,7 @@ tried := False }
         talkto(bartender, howisstew) >> {job := Available} & { "You ask for some stew knowingly that you just ruined it with the rat. The current chef is fired and the job is now available. Maybe something for you?" }
     { job = Available, hasbeenhired != True } ?
         talkto(bartender, askforjob) >> {hasbeenhired := True; job := Unavailable; money := Money420; player.loc := Kitchen} & { "You are now hired. The pay is paid in advance and you enter the kitchen with no intention whatsoever of fullfilling your newfound duties." }
-    walkto(doorway) >> {player.loc := WoodtickLeft} & { "You leave the BloddyLips and are now among several ships" };
+    walkto(doorway) >> {player.loc := WoodtickLeft} & { "You leave the BloddyLips and are now among several ships" }
 
 { player.loc = Kitchen } ?
     { knife.loc = Kitchen } ?
@@ -145,10 +145,10 @@ tried := False }
     { rat.loc = Inv } ?
         use(rat, stew) >> {rat.loc := Vichyssoise} & { "You put the rat in the Vichyssoise" }
     walkto(window) >> {player.loc := WoodtickLeft} & { "You crawl out the window. You are among several ships" }
-    walkto(door) >> {player.loc := BloddyLips} & { "You enter the BloddyLips from the kitchen" };
+    walkto(door) >> {player.loc := BloddyLips} & { "You enter the BloddyLips from the kitchen" }
 
 { player.loc = Woodsmith } ?
-    walkto(path) >> {player.loc := WoodtickLeft} & { "You are among several ships" };
+    walkto(path) >> {player.loc := WoodtickLeft} & { "You are among several ships" }
 
 { player.loc = VoodooShack } ?
     walkto(coffinpath) >> {player.loc := Coffin} & { "You enter the coffin" }
@@ -168,42 +168,42 @@ tried := False }
     { bones.loc = VoodooShack, bra.loc = VoodooShack, toupee.loc = VoodooShack, spit.loc = VoodooShack } ?
         talkto(lady, doll) >> {doll.loc := Inv; pins.loc := Inv; bones.loc := Undefined; bra.loc := Undefined; toupee.loc := Undefined; spit.loc := Undefined} & { "You now have the voodoodoll. Now just find Largo" }
     { largoembargo = Alleviated, bigWhoopBook.loc != Inv } ?
-        talkto(lady, escapeLargo) >> {bigWhoopBook.loc := Inv} & { "The lady tells you that you can escape Largo by finding Big Whoop. You get a book about it." };
+        talkto(lady, escapeLargo) >> {bigWhoopBook.loc := Inv} & { "The lady tells you that you can escape Largo by finding Big Whoop. You get a book about it." }
 
 { player.loc = Swamp } ?
     { bucket.loc = Inv } ?
         use(bucket, swamp) >> {bucket.cont := Mud; swamp.loc := Undefined} & { "You fill up the bucket with mud." }
     use(coffin) >> {player.loc := Coffin} & { "You enter the coffin. You can now row around in the swamp." }
-    walkto(path) >> {player.loc := Map} & { "You are looking at the map of Scabb island" };
+    walkto(path) >> {player.loc := Map} & { "You are looking at the map of Scabb island" }
 
 { player.loc = Coffin } ?
     rowto(shore) >> {player.loc := Swamp} & { "You row to the shore" }
-    rowto(shackpath) >> {player.loc := VoodooShack} & { "You row into the swamp and find the entrance to the voodooschack" };
+    rowto(shackpath) >> {player.loc := VoodooShack} & { "You row into the swamp and find the entrance to the voodooschack" }
 
 { player.loc = Cemetery } ?
     walkto(path) >> {player.loc := Map} & { "You are looking at the map of Scabb island" }
-    walkto(graves) >> {player.loc := Graves} & { "You are at the top of a hill of graves" };
+    walkto(graves) >> {player.loc := Graves} & { "You are at the top of a hill of graves" }
 
 { player.loc = Graves } ?
     { shovel.loc = Inv } ?
         use(shovel, largosgrave) >> {bones.loc := Inv; largosgrave.loc := Undefined} & { "You dig up bones from Largo's grave." }
-    walkto(cemetery) >> {player.loc := Cemetery} & { "You are at the cemetery" };
+    walkto(cemetery) >> {player.loc := Cemetery} & { "You are at the cemetery" }
 
 { player.loc = Peninsula } ?
     walkto(path) >> {player.loc := Map} & { "You are looking at the map of Scabb island" }
-    walkto(houseboat) >> {player.loc := Dreadsship} & { "You enter Dread's houseboat" };
+    walkto(houseboat) >> {player.loc := Dreadsship} & { "You enter Dread's houseboat" }
 
 { player.loc = Dreadsship } ?
     { monocle.loc = Inv } ?
         give(monocle, dread) >> {monocle.loc := Dread} & { "You give the monocle to Dread. He is happy to have found a new lucky charm" }
     { money != None, largoembargo = Alleviated, monocle.loc = Dread } ?
         talkto(dread, charterShip) >> {money := Money400} & { "You charter Dread's ship" }
-    walkto(path) >> {player.loc := Peninsula} & { "You are now just outside Dread's houseboat" };
+    walkto(path) >> {player.loc := Peninsula} & { "You are now just outside Dread's houseboat" }
 
 { player.loc = Beach } ?
     { stick.loc = Beach } ?
         pickUp(stick) >> {stick.loc := Inv} & { "You pick up a stick" }
-    walkto(path) >> {player.loc := Map} & { "You are looking at the map of Scabb island" };
+    walkto(path) >> {player.loc := Map} & { "You are looking at the map of Scabb island" }
 
 { player.loc = Map } ?
     walkto(beach) >> {player.loc := Beach} & { "You are at the beach. Nice" }

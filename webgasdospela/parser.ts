@@ -56,14 +56,16 @@ const arule = P.seq(action.skip(then).skip(lbrace),
                     ).map(([action, updates, sideEffect]) => new lang.ARule(action, updates,
                         new lang.PrintSideEffect(sideEffect)));
 
+const TabSize = 4;
+
 const prule =
     P.seq(P.index, lbrace.then(commaSep(comparison)).skip(rbrace).skip(question))
         .chain(([index, conds]) =>
-            rule.atLeast(1).map((rules) => new lang.PRule(conds, rules)));
+            P.index.chain((i) => i.column === index.column + TabSize ? rule : P.fail("no more")).atLeast(1).map((rules) => new lang.PRule(conds, rules)));
 
 const rule: P.Parser<lang.Rule> = P.lazy(() => P.alt(prule, arule));
 
-const rules = P.sepBy(rule, semiColon);
+const rules = rule.many();
 
 const initialState = ts("Initial").skip(lbrace).then(commaSep(update)).skip(rbrace);
 
