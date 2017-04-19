@@ -1,33 +1,14 @@
 Initial {  }
 
-{ hasStarted != True } ?
-    start() >> {hasStarted := True;
-            riches.loc := Inv;
-            player.loc := WoodtickRight;
-            bucket.cont := Empty;
-            hatch := Closed;
+start() >> {bucket.cont := Empty;
             job := Unavailable;
             largoembargo := Enforced;
             ldoor := Closed;
             money := None;
-            bones.loc := Graves;
-            knife.loc := Kitchen;
-            monocle.loc := WallysShip;
-            paper.loc := WallysShip;
-            polish.loc := Woodsmith;
-            bra.loc := LaundryShip;
-            bucket.loc := LaundryShip;
-            rat.loc := LaundryShip;
-            shovel.loc := WoodtickRight;
-            stick.loc := Beach;
-            pins.loc := VoodooShack;
-            doll.loc := VoodooShack;
-            string.loc := VoodooShack;
-            toupee.loc := Largosroom;
-            alligator.loc := Inn;
-            innkeeper.loc := Inn;
-            cheesesq.loc := Inn;
-            rope.loc := Inn} & { "You are standing at the foot of a bridge, a shovel is tied to a sign next to you." }
+            stick.loc := Beach}
+
+start() >> { player.loc := WoodtickRight; riches.loc := Inv; shovel.loc := WoodtickRight }
+    & { "You are standing at the foot of a bridge, a shovel is tied to a sign next to you." }
 
 { player.loc = WoodtickRight } ?
     { shovel.loc = WoodtickRight } ?
@@ -50,6 +31,11 @@ Initial {  }
     walkto(inndoor) >> {player.loc := Inn} & { "You enter the Inn. There's rumors Largo has a room here" }
     walkto(bridge) >> {player.loc := WoodtickRight} & { "You are just outside Woodtick" }
 
+start() >> {alligator.loc := Inn;
+            innkeeper.loc := Inn;
+            cheesesq.loc := Inn;
+            rope.loc := Inn}
+
 { player.loc = Inn } ?
     walkto(doorway) >> {player.loc := WoodtickLeft} & { "You are among several ships" }
     { knife.loc = Inv, rope.loc = Inn } ?
@@ -61,6 +47,8 @@ Initial {  }
     { ldoor = Open } ?
         walkto(door) >> {player.loc := Largosroom} & { "You enter Largo's room" }
         close(door) >> {ldoor := Closed} & { "The door to Largo's room is now closed" }
+
+start() >> {toupee.loc := Largosroom}
 
 { player.loc = Largosroom } ?
     { toupee.loc = Largosroom } ?
@@ -76,6 +64,11 @@ Initial {  }
             pickUp(ticket) >> {ticket.loc := Inv} & { "You got the cleaning ticket for Largo's clothes" }
     { largoembargo = Enforced, doll.loc = Inv, pins.loc = Inv } ?
         use(doll, pins) >> {largoembargo := Alleviated; player.loc := VoodooShack} & { "You quickly stap the doll with the pins. Largo is clearly upset and leaves Scapp Island. You are now back at the voodooschack" }
+
+start() >> {hatch := Closed;
+            bra.loc := LaundryShip;
+            bucket.loc := LaundryShip;
+            rat.loc := LaundryShip}
 
 { player.loc = LaundryShip } ?
     { hatch.sticked != True, hatch = Open } ?
@@ -111,6 +104,9 @@ Initial {  }
     { hatch = Open, rat.trapped = True } ?
         pickUp(rat) >> {rat.loc := Inv; rat.trapped := False; hatch := Closed} & { "You pick up the rat from the box" }
 
+start() >> {monocle.loc := WallysShip;
+            paper.loc := WallysShip}
+
 { player.loc = WallysShip } ?
     { paper.loc = WallysShip } ?
         pickUp(paper) >> {paper.loc := Inv} & { "You pick up an piece of paper" }
@@ -131,6 +127,8 @@ Initial {  }
         talkto(bartender, askforjob) >> {hasbeenhired := True; job := Unavailable; money := Money420; player.loc := Kitchen} & { "You are now hired. The pay is paid in advance and you enter the kitchen with no intention whatsoever of fullfilling your newfound duties." }
     walkto(doorway) >> {player.loc := WoodtickLeft} & { "You leave the BloddyLips and are now among several ships" }
 
+start() >> {knife.loc := Kitchen}
+
 { player.loc = Kitchen } ?
     { knife.loc = Kitchen } ?
         pickUp(knife) >> {knife.loc := Inv} & { "You take the chef's knife" }
@@ -139,9 +137,15 @@ Initial {  }
     walkto(window) >> {player.loc := WoodtickLeft} & { "You crawl out the window. You are among several ships" }
     walkto(door) >> {player.loc := BloddyLips} & { "You enter the BloddyLips from the kitchen" }
 
+start() >> {polish.loc := Woodsmith}
+
 { player.loc = Woodsmith } ?
     walkto(path) >> {player.loc := WoodtickLeft} & { "You are among several ships" }
     pickUp(polish) >> {polish.loc := Inv} & { "You pick up a can of wood polish" }
+
+start() >> {pins.loc := VoodooShack;
+            doll.loc := VoodooShack;
+            string.loc := VoodooShack}
 
 { player.loc = VoodooShack } ?
     walkto(coffinpath) >> {player.loc := Coffin} & { "You enter the coffin" }
@@ -176,6 +180,8 @@ Initial {  }
 { player.loc = Cemetery } ?
     walkto(path) >> {player.loc := Map} & { "You are looking at the map of Scabb island" }
     walkto(graves) >> {player.loc := Graves} & { "You are at the top of a hill of graves" }
+
+start() >> {bones.loc := Graves}
 
 { player.loc = Graves } ?
     { shovel.loc = Inv, bones.loc = Graves } ?
