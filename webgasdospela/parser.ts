@@ -10,18 +10,18 @@ function token<T>(p: P.Parser<T>): P.Parser<T> {
 let ts = (s: string) => token(P.string(s));
 
 var lbrace = ts('{');
-var rbrace = token(P.string('}'));
-var lpar = token(P.string('('));
-var rpar = token(P.string(')'));
-var comma = token(P.string(','));
-var colon = token(P.string(':'));
-var semiColon = token(P.string(';'));
-var setEq = token(P.string(':='));
-var isEq = token(P.string('='));
-var notEq = token(P.string('!='));
-var then = token(P.string('>>'));
-var ampersand = token(P.string('&'));
-var question = token(P.string('?'));
+var rbrace = ts('}');
+var lpar = ts('(');
+var rpar = ts(')');
+var comma = ts(',');
+var colon = ts(':');
+var semiColon = ts(';');
+var setEq = ts(':=');
+var isEq = ts('=');
+var notEq = ts('!=');
+var then = ts('>>');
+var ampersand = ts('&');
+var question = ts('?');
 
 function commaSep<T>(parser: P.Parser<T>) {
   return P.sepBy(parser, comma);
