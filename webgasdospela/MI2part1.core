@@ -35,7 +35,9 @@ string.loc := VoodooShack,
 talkedaboutLargo := False,
 ticket.loc := Undefined,
 toupee.loc := Largosroom,
-tried := False }
+tried := False,
+alligator.loc := Inn,
+innkeeper.loc := Inn }
 
 { player.loc = WoodtickRight } ?
     { shovel.loc = WoodtickRight } ?
