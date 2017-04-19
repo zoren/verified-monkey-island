@@ -80,8 +80,6 @@ Initial {  }
 { player.loc = LaundryShip } ?
     { hatch.sticked != True, hatch = Open } ?
         walkto(path) >> {player.loc := WoodtickLeft; hatch := Closed} & { "You hear the hatch close as you go back to the several-ships place" }
-    { hatch.sticked = True } ?
-        walkto(path) >> {player.loc := WoodtickLeft} & { "You are among several ships" }
     walkto(path) >> {player.loc := WoodtickLeft} & { "You are among several ships" }
     { ticket.loc = Inv } ?
         give(ticket, laundryGuy) >> {ticket.loc := Undefined; bra.loc := Inv} & { "You give the ticket to the deaf laundry guy. You now have Largo's bra!" }
