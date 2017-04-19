@@ -10,7 +10,6 @@ export function loadStory() {
         let state = interpreter.evalInitial(s.initialState);
 
         let current = <HTMLDivElement>document.getElementById("current-message");
-        current.innerText = "Welcome!"
         let availableActions = <HTMLDivElement>document.getElementById("available-actions");
         let handler = (se: lang.SideEffect) => {if(se){current.innerText = se.printText;}}
         let rules = Array.from(s.rules);
@@ -22,6 +21,7 @@ export function loadStory() {
                 button.innerText = actionRule.action.toString();
                 button.onclick = () => { interpreter.applyActionRule(state, actionRule, handler); listAvailableActions() }
                 availableActions.appendChild(button);
+                availableActions.appendChild(document.createElement("br"));
             });
         }
         listAvailableActions();
