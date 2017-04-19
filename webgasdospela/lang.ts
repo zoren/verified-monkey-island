@@ -1,13 +1,22 @@
 export class Action {
     constructor(public readonly actionName: string, public readonly args: string[]) {}
+    toString(){
+        return `${this.actionName}(${this.args.join(', ')})`
+    }
 }
 
 export class VariableDeref {
     constructor(public readonly name: string) {}
+    toString(){
+        return this.name;
+    }    
 }
 
 export class Constant {
     constructor(public readonly value: string) {}
+    toString(){
+        return this.value;
+    }
 }
 
 export class Update {

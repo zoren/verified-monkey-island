@@ -1,0 +1,20 @@
+<html>
+    <head>        
+        <script src="node_modules/parsimmon/build/parsimmon.browser.js"></script>           
+
+    </head>
+    <script src="dist/run.bundle.js"></script>  
+    <body>
+        <div style="display: flex">
+            <form onsubmit="Run.loadStory(); return false;">
+                <textarea id="story-text" cols="80" rows="50"></textarea>
+                <input type="submit" />
+            </form>
+            <script>Run.loadMI2part1();</script>
+            <div>
+                <div id="current-message"></div>
+                <div id="available-actions"></div> 
+            </div>
+        </div>
+    </body>
+</html>
