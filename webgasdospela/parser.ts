@@ -51,10 +51,9 @@ const update = P.seq(id.skip(setEq), ctor).map(([id, c]) => new lang.Update(id, 
 const action = P.seq(id.skip(lpar), commaSep(id).skip(rpar)).map(([id, names]) => new lang.Action(id, names));
 
 const arule = P.seq(action.skip(then).skip(lbrace),
-                    semiColonSep(update).skip(rbrace).skip(ampersand).skip(lbrace),
-                    stringLiteral.skip(rbrace)
-                    ).map(([action, updates, sideEffect]) => new lang.ARule(action, updates,
-                        new lang.PrintSideEffect(sideEffect)));
+                    semiColonSep(update).skip(rbrace),
+                    P.alt(ampersand.skip(lbrace).then(stringLiteral).skip(rbrace).map((s) => new lang.PrintSideEffect(s)), P.succeed(undefined))
+                    ).map(([action, updates, sideEffect]) => new lang.ARule(action, updates, sideEffect));
 
 const TabSize = 4;
 
