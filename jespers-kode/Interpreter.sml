@@ -103,7 +103,7 @@ struct
   val (initial_state, core_rules) = (* (Core.s0, [Core.rtest1, Core.rtest2]) *)
       E2C.transE2C ext_story
   val _ = print (State.ppstate initial_state)
-  val _ = print (String.concatWith "\n" (map Core.pprule core_rules))
+  val _ = print (String.concatWith ";\n\n" (map Core.pprule core_rules))
   val _ = print "\n"
   fun go () = ((
     output welcometext;
