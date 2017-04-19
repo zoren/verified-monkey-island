@@ -1,50 +1,50 @@
-class Action {
+export class Action {
     constructor(public readonly actionName: string, public readonly args: string[]) {}
 }
 
-class VariableDeref {
+export class VariableDeref {
     constructor(public readonly name: string) {}
 }
 
-class Constant {
+export class Constant {
     constructor(public readonly value: string) {}
 }
 
-type Expression = Constant | VariableDeref
+export type Expression = Constant | VariableDeref
 
-class Update {
+export class Update {
     constructor(public readonly name: string, public readonly exp: Expression) {}
 }
 
-class PrintSideEffect {
+export class PrintSideEffect {
     constructor(public readonly printText: string) {}
 }
 
-type SideEffect = PrintSideEffect | undefined;
+export type SideEffect = PrintSideEffect | undefined;
 
-class ARule {
+export class ARule {
     constructor(public readonly action: Action,
                 public readonly updates: Update[],
                 public readonly sideEffect: SideEffect) {}
 }
 
-enum ComparisonOperator {
+export enum ComparisonOperator {
     EQ, NEQ
 }
 
-class Condition {
+export class Condition {
     constructor(public readonly expl: Expression,
                 public readonly compOperator: ComparisonOperator,
                 public readonly expr: Expression) {}
 }
 
-type Rule = ARule | PRule
+export type Rule = ARule | PRule
 
-class PRule {
+export class PRule {
     constructor(public readonly preconditions: Condition[],
                 public readonly rules: Rule[]) {}
 }
 
-class Story {
+export class Story {
     constructor(public readonly initialState: Update[], public readonly rules: Rule[]){}
 }

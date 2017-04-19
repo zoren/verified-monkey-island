@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@types/node": "^7.0.13",
+    "@types/parsimmon": "^1.0.4",
+    "node": "^0.0.0",
+    "parsimmon": "^1.2.0",
+    "typescript": "^2.2.2"
+  }
+}
