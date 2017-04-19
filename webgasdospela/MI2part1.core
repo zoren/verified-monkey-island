@@ -188,7 +188,7 @@ rope.loc := Inn }
     walkto(graves) >> {player.loc := Graves} & { "You are at the top of a hill of graves" }
 
 { player.loc = Graves } ?
-    { shovel.loc = Inv } ?
+    { shovel.loc = Inv, bones.loc = Graves } ?
         use(shovel, largosgrave) >> {bones.loc := Inv} & { "You dig up bones from Largo's grave." }
     walkto(cemetery) >> {player.loc := Cemetery} & { "You are at the cemetery" }
 
