@@ -17,10 +17,22 @@ export function loadStory() {
         let listAvailableActions = () => {
             availableActions.innerHTML = ""
             let actions = interpreter.getAvailableActionRules(state, rules);
-            actions.forEach((actionRule) => {
+
+            let dedub = new Map<string, lang.ARule[]>();
+            actions.forEach((action) => {
+                let k = action.action.toString();
+                let v = dedub.get(k);
+                if(!v){
+                    v = [];
+                    dedub.set(k, v);
+                }
+                v.push(action);
+            })
+
+            dedub.forEach((actionRules, actionString) => {
                 let button = document.createElement("button");
-                button.innerText = actionRule.action.toString();
-                button.onclick = () => { interpreter.applyActionRule(state, actionRule, handler); listAvailableActions() }
+                button.innerText = actionString;
+                button.onclick = () => { actionRules.forEach((actionRule) => interpreter.applyActionRule(state, actionRule, handler)); listAvailableActions() };
                 availableActions.appendChild(button);
                 availableActions.appendChild(document.createElement("br"));
             });
