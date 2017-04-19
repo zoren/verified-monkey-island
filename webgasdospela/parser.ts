@@ -46,7 +46,7 @@ const comparisonOp =
     P.alt(isEq.result(lang.ComparisonOperator.EQ), notEq.result(lang.ComparisonOperator.NEQ));
 const comparison = P.seqMap(exp, comparisonOp, exp, (e1, compOp, e2) => new lang.Condition(e1, compOp, e2))
 
-const update = P.seq(id.skip(setEq), exp).map(([id, e]) => new lang.Update(id, e));
+const update = P.seq(id.skip(setEq), ctor).map(([id, c]) => new lang.Update(id, c));
 
 const action = P.seq(id.skip(lpar), commaSep(id).skip(rpar)).map(([id, names]) => new lang.Action(id, names));
 

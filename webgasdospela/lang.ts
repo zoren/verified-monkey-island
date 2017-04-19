@@ -10,10 +10,8 @@ export class Constant {
     constructor(public readonly value: string) {}
 }
 
-export type Expression = Constant | VariableDeref
-
 export class Update {
-    constructor(public readonly name: string, public readonly exp: Expression) {}
+    constructor(public readonly name: string, public readonly constant: Constant) {}
 }
 
 export class PrintSideEffect {
@@ -31,6 +29,8 @@ export class ARule {
 export enum ComparisonOperator {
     EQ, NEQ
 }
+
+export type Expression = Constant | VariableDeref
 
 export class Condition {
     constructor(public readonly expl: Expression,
