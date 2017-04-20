@@ -1,0 +1,29 @@
+-- this is an attempt at how we could model Scott Cliffords Teeny Tiny Mansion in Gasdospela
+-- http://svn.clifford.at/handicraft/2017/tttm/README
+-- the goal is to "Help Alice get into the Red Room and help Bob get into the Blue Room."
+
+-- these rules should apply to both alice and bob
+-- in these rules player is a meta variable ranging over alice and bob
+{ player.loc = RedRoom, redkey.loc = player.inv } ?
+    walkto(redDoor) { player.loc = WestRoom }
+
+{ player.loc = WestRoom, redkey.loc = player.inv } ?
+    walkto(redDoor) { player.loc = RedRoom }
+{ player.loc = WestRoom, greeenkey.loc = player.inv } ?
+    walkto(greenDoor) { player.loc = EastRoom }
+
+{ player.loc = EastRoom, greeenkey.loc = player.inv } ?
+    walkto(greenDoor) { player.loc = WestRoom }
+{ player.loc = EastRoom, bluekey.loc = player.inv } ?
+    walkto(blueDoor) { player.loc = BlueRoom }
+
+{ player.loc = BlueRoom, bluekey.loc = player.inv  } ?
+    walkto(blueDoor) { player.loc = EastRoom }
+
+-- pass key to other character
+-- in these rules key is a meta variable ranging over the red, green and blue keys
+{ alice.loc = bob.loc, key.loc = AliceInv } ?
+    alicePass(key, bob) { key.loc := BobInv } & { "Alice passes the key to Bob" }
+{ alice.loc = bob.loc, key.loc = BobInv } ?
+    alicePass(key, bob) { key.loc := AliceInv } & { "Bob passes the key to Alice" }
+
