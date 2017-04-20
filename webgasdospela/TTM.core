@@ -4,21 +4,21 @@
 
 -- these rules should apply to both alice and bob
 -- in these rules player is a meta variable ranging over alice and bob
-{ player.loc = RedRoom, redkey.loc = player.inv } ?
-    walkto(redDoor) { player.loc = WestRoom }
+{ player.loc = RedRoom, redkey.loc := player.inv } ?
+    walkto(redDoor) { player.loc := WestRoom }
 
 { player.loc = WestRoom, redkey.loc = player.inv } ?
-    walkto(redDoor) { player.loc = RedRoom }
+    walkto(redDoor) { player.loc := RedRoom }
 { player.loc = WestRoom, greeenkey.loc = player.inv } ?
-    walkto(greenDoor) { player.loc = EastRoom }
+    walkto(greenDoor) { player.loc := EastRoom }
 
 { player.loc = EastRoom, greeenkey.loc = player.inv } ?
-    walkto(greenDoor) { player.loc = WestRoom }
+    walkto(greenDoor) { player.loc := WestRoom }
 { player.loc = EastRoom, bluekey.loc = player.inv } ?
-    walkto(blueDoor) { player.loc = BlueRoom }
+    walkto(blueDoor) { player.loc := BlueRoom }
 
 { player.loc = BlueRoom, bluekey.loc = player.inv  } ?
-    walkto(blueDoor) { player.loc = EastRoom }
+    walkto(blueDoor) { player.loc := EastRoom }
 
 -- pass key to other character
 -- in these rules key is a meta variable ranging over the red, green and blue keys
