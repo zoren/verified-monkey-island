@@ -2,6 +2,23 @@
 -- http://svn.clifford.at/handicraft/2017/tttm/README
 -- the goal is to "Help Alice get into the Red Room and help Bob get into the Blue Room."
 
+-- meta rules for the map could look something like this
+ConnectWithLockableDoor($player, $room1, $room2, $doorName)
+    { $player.loc = $room1, $doorName.key.loc = $player.inv } ?
+        walkto($doorName.door) { $player.loc := room2 }
+
+ConnectWithTwoWayLockableDoor($player, $room1, $room2, $doorName)
+    ConnectWithLockableDoor($player, $room1, $room2, $doorName)
+    ConnectWithLockableDoor($player, $room2, $room1, $doorName)
+
+CreateMapForPlayer($player)
+    ConnectWithTwoWayLockableDoor($player, RedRoom, WestRoom, red)
+    ConnectWithTwoWayLockableDoor($player, WestRoom, EastRoom, green)
+    ConnectWithTwoWayLockableDoor($player, EastRoom, BlueRoom, blue)
+
+CreateMapForPlayer(alice)
+CreateMapForPlayer(bob)
+
 -- these rules should apply to both alice and bob
 -- in these rules player is a meta variable ranging over alice and bob
 { player.loc = RedRoom, redkey.loc := player.inv } ?
