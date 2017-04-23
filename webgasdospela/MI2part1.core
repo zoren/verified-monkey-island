@@ -1,7 +1,4 @@
-Initial {  }
-
-start() >> { player.loc := WoodtickRight; riches.loc := Inv; shovel.loc := WoodtickRight }
-    & { "You are standing at the foot of a bridge, a shovel is tied to a sign next to you." }
+Initial { player.loc := WoodtickRight; riches.loc := Inv; shovel.loc := WoodtickRight }
 
 { player.loc = WoodtickRight } ?
     { shovel.loc = WoodtickRight } ?
@@ -24,7 +21,7 @@ start() >> { player.loc := WoodtickRight; riches.loc := Inv; shovel.loc := Woodt
     walkto(inndoor) >> {player.loc := Inn} & { "You enter the Inn. There's rumors Largo has a room here" }
     walkto(bridge) >> {player.loc := WoodtickRight} & { "You are just outside Woodtick" }
 
-start() >> {alligator.loc := Inn;
+Initial {alligator.loc := Inn;
             innkeeper.loc := Inn;
             cheesesq.loc := Inn;
             rope.loc := Inn;
@@ -42,7 +39,7 @@ start() >> {alligator.loc := Inn;
         walkto(door) >> {player.loc := Largosroom} & { "You enter Largo's room" }
         close(door) >> {ldoor := Closed} & { "The door to Largo's room is now closed" }
 
-start() >> {ticket.loc := Largosroom;
+Initial {ticket.loc := Largosroom;
             toupee.loc := Largosroom;
             largoembargo := Enforced}
 
@@ -61,7 +58,7 @@ start() >> {ticket.loc := Largosroom;
     { largoembargo = Enforced, doll.loc = Inv, pins.loc = Inv } ?
         use(doll, pins) >> {largoembargo := Alleviated; player.loc := VoodooShack} & { "You quickly stap the doll with the pins. Largo is clearly upset and leaves Scapp Island. You are now back at the voodooschack" }
 
-start() >> {hatch := Closed;
+Initial {hatch := Closed;
             bra.loc := LaundryShip;
             bucket.loc := LaundryShip;
             bucket.cont := Empty;
@@ -105,7 +102,7 @@ start() >> {hatch := Closed;
     { hatch = Open, rat.trapped = True } ?
         pickUp(rat) >> {rat.loc := Inv; rat.trapped := False; hatch := Closed} & { "You pick up the rat from the box" }
 
-start() >> {monocle.loc := WallysShip;
+Initial {monocle.loc := WallysShip;
             paper.loc := WallysShip}
 
 { player.loc = WallysShip } ?
@@ -128,7 +125,7 @@ start() >> {monocle.loc := WallysShip;
         talkto(bartender, askforjob) >> {hasbeenhired := True; job := Unavailable; money := Money420; player.loc := Kitchen} & { "You are now hired. The pay is paid in advance and you enter the kitchen with no intention whatsoever of fullfilling your newfound duties." }
     walkto(doorway) >> {player.loc := WoodtickLeft} & { "You leave the BloddyLips and are now among several ships" }
 
-start() >> {knife.loc := Kitchen}
+Initial {knife.loc := Kitchen}
 
 { player.loc = Kitchen } ?
     { knife.loc = Kitchen } ?
@@ -138,14 +135,14 @@ start() >> {knife.loc := Kitchen}
     walkto(window) >> {player.loc := WoodtickLeft} & { "You crawl out the window. You are among several ships" }
     walkto(door) >> {player.loc := BloddyLips} & { "You enter the BloddyLips from the kitchen" }
 
-start() >> {polish.loc := Woodsmith}
+Initial {polish.loc := Woodsmith}
 
 { player.loc = Woodsmith } ?
     walkto(path) >> {player.loc := WoodtickLeft} & { "You are among several ships" }
     { polish.loc = Woodsmith } ?
         pickUp(polish) >> {polish.loc := Inv} & { "You pick up a can of wood polish" }
 
-start() >> {pins.loc := VoodooShack;
+Initial {pins.loc := VoodooShack;
             doll.loc := VoodooShack;
             string.loc := VoodooShack}
 
@@ -183,7 +180,7 @@ start() >> {pins.loc := VoodooShack;
     walkto(path) >> {player.loc := Map} & { "You are looking at the map of Scabb island" }
     walkto(graves) >> {player.loc := Graves} & { "You are at the top of a hill of graves" }
 
-start() >> {bones.loc := Graves}
+Initial {bones.loc := Graves}
 
 { player.loc = Graves } ?
     { shovel.loc = Inv, bones.loc = Graves } ?
@@ -201,7 +198,7 @@ start() >> {bones.loc := Graves}
         talkto(dread, charterShip) >> {money := Money400} & { "You charter Dread's ship" }
     walkto(path) >> {player.loc := Peninsula} & { "You are now just outside Dread's houseboat" }
 
-start() >> {stick.loc := Beach}
+Initial {stick.loc := Beach}
 
 { player.loc = Beach } ?
     { stick.loc = Beach } ?
