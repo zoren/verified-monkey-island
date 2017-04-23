@@ -7,13 +7,17 @@ export function loadStory() {
     var result = parser.story.parse(current.value);
     if(result.status){
         let s = result.value;
-        let state = interpreter.evalInitial(s.initialState);
+        let initialStateDecls = interpreter.getInitialStateDecls(s);
+        let state = interpreter.makeEmptyState();
+        for(let updates of initialStateDecls){
+            interpreter.evalInitial(state, updates);
+        }
 
         let current = <HTMLDivElement>document.getElementById("current-message");
         let availableActions = <HTMLDivElement>document.getElementById("available-actions");
         let inventory = <HTMLDivElement>document.getElementById("inventory");
         let handler = (se: lang.SideEffect) => {if(se){current.innerText = se.printText;}}
-        let rules = Array.from(s.rules);
+        let rules = interpreter.getRulesDecls(s);
         let listAvailableActions = () => {
             availableActions.innerHTML = ""
             let actions = interpreter.getAvailableActionRules(state, rules);

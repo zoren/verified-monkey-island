@@ -64,8 +64,8 @@ const prule =
 
 const rule: P.Parser<lang.Rule> = P.lazy(() => P.alt(prule, arule));
 
-const rules = rule.many();
+const initialState = ts("Initial").skip(lbrace).then(semiColonSep(update)).skip(rbrace).map((updates) => new lang.InitBlock(updates));
 
-const initialState = ts("Initial").skip(lbrace).then(commaSep(update)).skip(rbrace);
+const decl = P.alt(initialState, rule)
 
-export const story = P.seqMap(initialState, rules, (state, rules) => new lang.Story(state, rules));
+export const story = decl.many().map(decls => new lang.Story(decls));

@@ -54,6 +54,12 @@ export class PRule {
                 public readonly rules: Rule[]) {}
 }
 
+export class InitBlock {
+    constructor(public readonly updates: Update[]){}
+}
+
+export type StoryDecl = InitBlock | Rule;
+
 export class Story {
-    constructor(public readonly initialState: Update[], public readonly rules: Rule[]){}
+    constructor(public readonly decls: StoryDecl[]){}
 }

@@ -6,7 +6,7 @@ function concatMany<T>(arrays: T[][]): T[] {
     return res;
 }
 
-type State = Map<string, lang.Constant>
+export type State = Map<string, lang.Constant>
 
 function evalComp(compOp: lang.ComparisonOperator){
     switch(compOp){
@@ -47,13 +47,27 @@ export function applyActionRule (state: State, rule: lang.ARule, sideEffectHandl
     sideEffectHandler(rule.sideEffect);
 }
 
-export function evalInitial(updates: lang.Update[]): State {
-    let s = new Map();
+export function evalInitial(s: State, updates: lang.Update[]) {
     updates.forEach((update) => {
         if (s.get(update.name)) {
             throw new Error(`Variable ${update.name} redefined.`);
         }
         s.set(update.name, update.constant)
     });
-    return s;
 }
+
+export function getInitialStateDecls(story: lang.Story) {
+    let initBlocks: lang.Update[][] = []
+    story.decls.forEach((decl) => {if(decl instanceof lang.InitBlock) {initBlocks.push(decl.updates)}});
+    return initBlocks;
+}
+
+export function getRulesDecls(story: lang.Story) {
+    let rules: lang.Rule[] = []
+    story.decls.forEach((decl) => {
+        if (decl instanceof lang.ARule || decl instanceof lang.PRule) { rules.push(decl) }
+    });
+    return rules;
+}
+
+export let makeEmptyState = () => new Map() as State;
