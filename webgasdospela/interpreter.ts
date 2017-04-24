@@ -6,7 +6,7 @@ function concatMany<T>(arrays: T[][]): T[] {
     return res;
 }
 
-export type State = Map<string, lang.Constant>
+export type State = (string) => string | undefined
 
 function evalComp(compOp: lang.ComparisonOperator){
     switch(compOp){
@@ -17,8 +17,7 @@ function evalComp(compOp: lang.ComparisonOperator){
     }
 }
 
-export function getAvailableActionRules(state: State, rules: lang.Rule[]): lang.ARule[] {
-    let get = (id: string) => { let v = state.get(id); if (v === undefined) { return undefined; } return v.value; }
+export function getAvailableActionRules(get: State, rules: lang.Rule[]): lang.ARule[] {
     function evalCond(cond: lang.Condition) {
         let evalExp = (e: lang.Expression) => e instanceof lang.Constant ? e.value : get(e.name);
         let vl = evalExp(cond.expl);
@@ -42,20 +41,6 @@ export function getAvailableActionRules(state: State, rules: lang.Rule[]): lang.
     return concatMany(rules.map(getAvailableActions));
 }
 
-export function applyActionRule (state: State, rule: lang.ARule, sideEffectHandler: (se: lang.SideEffect) => void) {
-    rule.updates.map((upd) => state.set(upd.name, upd.constant));
-    sideEffectHandler(rule.sideEffect);
-}
-
-export function evalInitial(s: State, updates: lang.Update[]) {
-    updates.forEach((update) => {
-        if (s.get(update.name)) {
-            throw new Error(`Variable ${update.name} redefined.`);
-        }
-        s.set(update.name, update.constant)
-    });
-}
-
 export function getInitialStateDecls(story: lang.Story) {
     let initBlocks: lang.Update[][] = []
     story.decls.forEach((decl) => {if(decl instanceof lang.InitBlock) {initBlocks.push(decl.updates)}});
@@ -69,5 +54,3 @@ export function getRulesDecls(story: lang.Story) {
     });
     return rules;
 }
-
-export let makeEmptyState = () => new Map() as State;
