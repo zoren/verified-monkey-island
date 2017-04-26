@@ -66,9 +66,6 @@ export function findPath(givenState: State, rules: lang.Rule[], pred: (state: in
         if (!workItem) {
             return;
         }
-        if (visitedStates.has(workItem.stateString)) {
-            continue;
-        }
         let state = workItem.state;
         let s = lift(state);
         if (pred(s)) {
@@ -77,7 +74,10 @@ export function findPath(givenState: State, rules: lang.Rule[], pred: (state: in
         let availableActionRules = interpreter.getAvailableActionRules(s, rules);
         for (let actionRule of availableActionRules) {
             let newState = applyActionRule(state, actionRule, () => { });
-            stack.push(new WorkItem(newState, new Cons(actionRule.action, workItem.path)));
+            let newWorkItem = new WorkItem(newState, new Cons(actionRule.action, workItem.path));
+            if (!visitedStates.has(newWorkItem.stateString)) {
+                stack.push(newWorkItem);                
+            }
         }
         visitedStates.add(workItem.stateString);
     }
