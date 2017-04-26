@@ -18,12 +18,13 @@
                     <div id="inventory"></div> 
                 </div>
                 <div>
-                    <form onsubmit="Run.analyse(); return false;">
+                    <form onsubmit="return false;">
                         <label>
                             Enter predicate for completion analysis<br/>
                             <input type="text" id="predicate-input" value="money = Money400"/>
                         </label>
-                        <input type="submit" value="Analyse" />
+                        <input type="submit" value="Analyse from initial state" onclick="Run.analyseInitial();" />
+                        <input type="submit" value="Analyse from current state" onclick="Run.analyseCurrent();" />
                     </form>
                     <textarea id="actions-textarea" cols="40" ></textarea>
                 </div>

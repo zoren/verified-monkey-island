@@ -2,7 +2,7 @@ import { Nil, Cons, List, forEach, lookup} from "./list"
 import * as lang from "./lang"
 import * as interpreter from "./interpreter"
 
-type State = List<[string, lang.Constant]>
+export type State = List<[string, lang.Constant]>
 
 let lift = (state: State) => (s: string) => {
     let c = lookup(s, state);

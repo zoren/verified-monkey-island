@@ -23,16 +23,17 @@ import * as analysis from "./analysis"
     
 let story: lang.Story | undefined;
 
+let currentState = new Map();
+
 export function loadStory() {
     let current = <HTMLTextAreaElement>document.getElementById("story-text");    
     var result = parser.story.parse(current.value);
     if(result.status){
         story = result.value;
         let initialStateDecls = interpreter.getInitialStateDecls(story);
-        let state = new Map();
-        let lState = liftState(state);
+        let lState = liftState(currentState);
         for(let updates of initialStateDecls){
-            evalInitial(state, updates);
+            evalInitial(currentState, updates);
         }
 
         let current = <HTMLDivElement>document.getElementById("current-message");
@@ -58,12 +59,12 @@ export function loadStory() {
             dedub.forEach((actionRules, actionString) => {
                 let button = document.createElement("button");
                 button.innerText = actionString;
-                button.onclick = () => { actionRules.forEach((actionRule) => applyActionRule(state, actionRule, handler)); listAvailableActions() };
+                button.onclick = () => { actionRules.forEach((actionRule) => applyActionRule(currentState, actionRule, handler)); listAvailableActions() };
                 availableActions.appendChild(button);
                 availableActions.appendChild(document.createElement("br"));
             });
             inventory.innerHTML = "";
-            state.forEach((v, k) => {
+            currentState.forEach((v, k) => {
                 if (v.value === "Inv") {
                     let e = document.createElement("div");
                     e.innerText = k.endsWith(".loc") ? k.substr(0, k.length - 4) : k;
@@ -92,33 +93,67 @@ export function loadMI2part1() {
     });
 }
 
-export function analyse() {
+function clearPathDisplay(){
+    let d = <HTMLTextAreaElement>document.getElementById("actions-textarea");        
+    d.value = "";
+}
+
+function showPath(path: list.List<lang.Action>) {
+    let ar: lang.Action[] = [];
+    list.forEach((a) => ar.push(a))(path);
+    ar.reverse();
+    clearPathDisplay();
+    let d = <HTMLTextAreaElement>document.getElementById("actions-textarea");        
+    d.rows = ar.length;
+    ar.forEach((a) => console.log(d.value += a.toString() + "\n"));
+}
+
+function getPredicate() {
     let predicateInput = <HTMLInputElement>document.getElementById("predicate-input");
     let s = predicateInput.value;
     let v = parser.comparisons.parse(s);
-    if(!v.status){
-        return console.error("could not parse", v);
+    if (!v.status) {
+        throw new Error("could not parse");
     }
+    let comparisons = v.value;
+    return (s: interpreter.State) => interpreter.evalConds(s, comparisons);
+}
+
+function getStory(){
     if(!story){
         loadStory();
     }
     if(!story){
-        return console.error("story not loaded, could not analyse");
+        throw new Error("story not loaded, could not analyse");
     }
-    let comparisons = v.value;
-    let pred = (s: interpreter.State) => interpreter.evalConds(s, comparisons);
-    let initialState = analysis.getDeclsAsInitialState(story);
+    return story;
+}
+
+function analyse(startingState: analysis.State) {
+    let story = getStory();
+    let pred = getPredicate();
     let rules = interpreter.getRulesDecls(story);
-    let foundPath = analysis.findPath(initialState, rules, pred);
+    let foundPath = analysis.findPath(startingState, rules, pred);
     if(foundPath){
-        let ar: lang.Action[] = [];
-        list.forEach((a) => ar.push(a))(foundPath);
-        ar.reverse();
-        let d = <HTMLTextAreaElement>document.getElementById("actions-textarea");        
-        d.innerHTML = "";
-        d.rows = ar.length;
-        ar.forEach((a) => console.log(d.value += a.toString() + "\n"));
+        showPath(foundPath);
     }else{
         console.log("did not find path");
     }
+}
+
+export function analyseInitial() {
+    clearPathDisplay();
+    let story = getStory();    
+    let initialState = analysis.getDeclsAsInitialState(story);
+    analyse(initialState);
+}
+
+export function analyseCurrent() {
+    clearPathDisplay();
+    let story = getStory();    
+    let state: analysis.State = list.Nil;
+    currentState.forEach((v, k) => {
+        state = new list.Cons([k, v], state);
+    })
+    analyse(state);
 }
