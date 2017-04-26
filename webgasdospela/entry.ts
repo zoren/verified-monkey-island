@@ -105,7 +105,9 @@ function showPath(path: list.List<lang.Action>) {
     clearPathDisplay();
     let d = <HTMLTextAreaElement>document.getElementById("actions-textarea");        
     d.rows = ar.length;
-    ar.forEach((a) => console.log(d.value += a.toString() + "\n"));
+    let s: string[] = [];
+    ar.forEach((a) => s.push(a.toString()));
+    d.value = s.join("\n");
 }
 
 function getPredicate() {
