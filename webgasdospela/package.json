@@ -1,4 +1,6 @@
 {
+  "name": "webgasdospela",
+  "version": "0.0.0.1",
   "dependencies": {
     "@types/node": "^7.0.13",
     "@types/parsimmon": "^1.0.4",
