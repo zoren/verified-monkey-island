@@ -17,7 +17,7 @@ function evalComp(compOp: lang.ComparisonOperator){
     }
 }
 
-export function getAvailableActionRules(get: State, rules: lang.Rule[]): lang.ARule[] {
+export function evalConds(get: State, conds: lang.Condition[]){
     function evalCond(cond: lang.Condition) {
         let evalExp = (e: lang.Expression) => e instanceof lang.Constant ? e.value : get(e.name);
         let vl = evalExp(cond.expl);
@@ -25,13 +25,16 @@ export function getAvailableActionRules(get: State, rules: lang.Rule[]): lang.AR
         let f = evalComp(cond.compOperator);
         return f(vl, vr);
     }
+    return conds.every(evalCond);
+}
 
+export function getAvailableActionRules(get: State, rules: lang.Rule[]): lang.ARule[] {
     function getAvailableActions(rule: lang.Rule): lang.ARule[] {
         if (rule instanceof lang.ARule) {
             return [rule];
         } else
             if (rule instanceof lang.PRule) {
-                if (rule.preconditions.every(evalCond)) {
+                if (evalConds(get, rule.preconditions)) {
                     return concatMany(rule.rules.map(getAvailableActions));
                 }
                 return [];

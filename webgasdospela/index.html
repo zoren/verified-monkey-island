@@ -10,11 +10,22 @@
                 <input type="submit" value="Load story" />
             </form>
             <script>Run.loadMI2part1();</script>
-            <div>
-                <div id="current-message">Welcome! Press Load story to begin playing.</div>
-                <div id="available-actions"></div>
-                Inventory:
-                <div id="inventory"></div> 
+            <div style="display: flex; flex-direction: column;">
+                <div style="height: 50%">
+                    <div id="current-message">Welcome! Press Load story to begin playing.</div>
+                    <div id="available-actions"></div>
+                    Inventory:
+                    <div id="inventory"></div> 
+                </div>
+                <div>
+                    <form onsubmit="Run.analyse(); return false;">
+                        <label>
+                            Enter predicate for completion analysis<br/>
+                            <input type="text" id="predicate-input" value="money = Money400"/>
+                        </label>
+                        <input type="submit" value="Analyse" />
+                    </form>
+                </div>
             </div>
         </div>
     </body>

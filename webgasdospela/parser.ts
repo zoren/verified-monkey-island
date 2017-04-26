@@ -46,6 +46,8 @@ const comparisonOp =
     P.alt(isEq.result(lang.ComparisonOperator.EQ), notEq.result(lang.ComparisonOperator.NEQ));
 const comparison = P.seqMap(exp, comparisonOp, exp, (e1, compOp, e2) => new lang.Condition(e1, compOp, e2))
 
+export const comparisons = commaSep(comparison);
+
 const update = P.seq(id.skip(setEq), ctor).map(([id, c]) => new lang.Update(id, c));
 
 const action = P.seq(id.skip(lpar), commaSep(id).skip(rpar)).map(([id, names]) => new lang.Action(id, names));
@@ -58,7 +60,7 @@ const arule = P.seq(action.skip(then).skip(lbrace),
 const TabSize = 4;
 
 const prule =
-    P.seq(P.index, lbrace.then(commaSep(comparison)).skip(rbrace).skip(question))
+    P.seq(P.index, lbrace.then(comparisons).skip(rbrace).skip(question))
         .chain(([index, conds]) =>
             P.index.chain((i) => i.column === index.column + TabSize ? rule : P.fail("no more")).atLeast(1).map((rules) => new lang.PRule(conds, rules)));
 

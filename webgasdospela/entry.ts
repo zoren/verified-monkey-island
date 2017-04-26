@@ -2,16 +2,15 @@ import * as parser from "./parser"
 import * as lang from "./lang"
 import * as interpreter from "./interpreter"
 
-
-export function applyActionRule (state: Map<string, lang.Constant>, rule: lang.ARule, sideEffectHandler: (se: lang.SideEffect) => void) {
-    rule.updates.map((upd) => state.set(upd.name, upd.constant));
-    sideEffectHandler(rule.sideEffect);
-}
-
 function evalInitial(s: Map<string, lang.Constant>, updates: lang.Update[]) {
     updates.forEach((update) => {
         s.set(update.name, update.constant)
     });
+}
+
+function applyActionRule (state: Map<string, lang.Constant>, rule: lang.ARule, sideEffectHandler: (se: lang.SideEffect) => void) {
+    rule.updates.map((upd) => state.set(upd.name, upd.constant));
+    sideEffectHandler(rule.sideEffect);
 }
 
 let liftState = (map: Map<string, lang.Constant>) => ( (v: string) => {
@@ -19,12 +18,16 @@ let liftState = (map: Map<string, lang.Constant>) => ( (v: string) => {
         return c ? c.value : undefined;
     });
 
+import * as analysis from "./analysis"
+    
+let story: lang.Story | undefined;
+
 export function loadStory() {
     let current = <HTMLTextAreaElement>document.getElementById("story-text");    
     var result = parser.story.parse(current.value);
     if(result.status){
-        let s = result.value;
-        let initialStateDecls = interpreter.getInitialStateDecls(s);
+        story = result.value;
+        let initialStateDecls = interpreter.getInitialStateDecls(story);
         let state = new Map();
         let lState = liftState(state);
         for(let updates of initialStateDecls){
@@ -35,7 +38,7 @@ export function loadStory() {
         let availableActions = <HTMLDivElement>document.getElementById("available-actions");
         let inventory = <HTMLDivElement>document.getElementById("inventory");
         let handler = (se: lang.SideEffect) => {if(se){current.innerText = se.printText;}}
-        let rules = interpreter.getRulesDecls(s);
+        let rules = interpreter.getRulesDecls(story);
         let listAvailableActions = () => {
             availableActions.innerHTML = ""
             let actions = interpreter.getAvailableActionRules(lState, rules);
@@ -86,4 +89,22 @@ export function loadMI2part1() {
         console.log("loaded " + file);
         current.value = xhr.responseText
     });
+}
+
+export function analyse() {
+    let predicateInput = <HTMLInputElement>document.getElementById("predicate-input");
+    let s = predicateInput.value;
+    let v = parser.comparisons.parse(s);
+    if(!v.status){
+        return console.error("could not parse", v);
+    }
+    if(!story){
+        loadStory();
+    }
+    if(!story){
+        return console.error("story not loaded, could not analyse");
+    }
+    let comparisons = v.value;
+    let pred = (s: interpreter.State) => interpreter.evalConds(s, comparisons);
+    analysis.findPath(story, pred)
 }
