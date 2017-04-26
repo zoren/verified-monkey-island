@@ -2,6 +2,7 @@ module.exports = {
     entry: "./entry.ts",
     output: {
         path: __dirname + "/dist",
+        publicPath: "/dist/",
         filename: "run.bundle.js",
         sourceMapFilename: "run.bundle.map",
         // export itself to a global var
