@@ -4,14 +4,14 @@
   "dependencies": {
     "@types/node": "^7.0.13",
     "@types/parsimmon": "^1.0.4",
-    "node": "^0.0.0",
-    "parsimmon": "^1.2.0",
-    "ts-loader": "^2.0.3",
-    "typescript": "^2.2.2",
-    "webpack": "^2.4.1",
-    "webpack-dev-server": "^2.4.2"
+    "parsimmon": "^1.2.0"
   },
   "scripts": {
     "build": "node_modules/webpack-dev-server/bin/webpack-dev-server.js"
+  },
+  "devDependencies": {
+    "ts-loader": "^2.0.3",
+    "webpack": "^2.4.1",
+    "webpack-dev-server": "^2.4.5"
   }
 }
