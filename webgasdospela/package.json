@@ -8,5 +8,8 @@
     "typescript": "^2.2.2",
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.2"
+  },
+  "scripts": {
+    "build": "node_modules/webpack-dev-server/bin/webpack-dev-server.js"
   }
 }
