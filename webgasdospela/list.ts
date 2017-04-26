@@ -17,6 +17,12 @@ export function forEach<T>(f: (T) => void) {
     return rec;
 }
 
+export function length<T>(list: List<T>) {
+    let l = 0;
+    forEach(() => l++);
+    return l;
+}
+
 export function lookup<K, T>(k: K, list: List<[K, T]>) {
     while(list instanceof Cons){
         if(k === list.head[0]){
