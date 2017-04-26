@@ -1,3 +1,4 @@
+import * as list from "./list"
 import * as parser from "./parser"
 import * as lang from "./lang"
 import * as interpreter from "./interpreter"
@@ -106,5 +107,16 @@ export function analyse() {
     }
     let comparisons = v.value;
     let pred = (s: interpreter.State) => interpreter.evalConds(s, comparisons);
-    analysis.findPath(story, pred)
+    let foundPath = analysis.findPath(story, pred);
+    if(foundPath){
+        let ar: lang.Action[] = [];
+        list.forEach((a) => ar.push(a))(foundPath);
+        ar.reverse();
+        let d = <HTMLTextAreaElement>document.getElementById("actions-textarea");        
+        d.innerHTML = "";
+        d.rows = ar.length;
+        ar.forEach((a) => console.log(d.value += a.toString() + "\n"));
+    }else{
+        console.log("did not find path");
+    }
 }
