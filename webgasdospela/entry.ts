@@ -153,9 +153,5 @@ export function analyseInitial() {
 export function analyseCurrent() {
     clearPathDisplay();
     let story = getStory();    
-    let state: analysis.State = list.Nil;
-    currentState.forEach((v, k) => {
-        state = new list.Cons([k, v], state);
-    })
-    analyse(state);
+    analyse(new Map(currentState));
 }

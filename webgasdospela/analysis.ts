@@ -2,50 +2,36 @@ import { Nil, Cons, List, forEach, lookup} from "./list"
 import * as lang from "./lang"
 import * as interpreter from "./interpreter"
 
-export type State = List<[string, lang.Constant]>
+export type State = Map<string, lang.Constant>
 
 let lift = (state: State) => (s: string) => {
-    let c = lookup(s, state);
+    let c = state.get(s);
     return c ? c.value : undefined;
 }
 
-function evalUpdates(s: State, updates: lang.Update[]): State {   
-    updates.forEach((update) => {
-        s = new Cons([update.name, update.constant], s);
-    });
-    return s;
+function evalUpdatesCopy(s: State, updates: lang.Update[]): State {
+    let sc = new Map(s);
+    updates.forEach((update) => sc.set(update.name, update.constant));
+    return sc;
 }
 
 function applyActionRule (state: State, rule: lang.ARule, sideEffectHandler: (se: lang.SideEffect) => void): State {
     sideEffectHandler(rule.sideEffect);
-    return evalUpdates(state, rule.updates);
-}
-
-function printState(state: State){
-    console.log("{");
-    forEach((t) => {console.log(t[0], t[1].value)})(state);
-    console.log("}");
+    return evalUpdatesCopy(state, rule.updates);
 }
 
 export function getDeclsAsInitialState(story: lang.Story) {
     let initialDecls = interpreter.getInitialStateDecls(story);
-    let initialState: State = Nil;
-    for (let upd of initialDecls) {
-        initialState = evalUpdates(initialState, upd);
-    }
+    let initialState: State = new Map();
+    initialDecls.forEach((updates) =>
+        updates.forEach((update) =>
+            initialState.set(update.name, update.constant)
+        ));
     return initialState;
 }
 
 function stateToString(state: State){
-    let m = new Map<string, string>();
-    let f = (tup:[string, lang.Constant]) =>{
-        let v = m.get(tup[0]);
-        if(!v){
-            m.set(tup[0], tup[1].value)
-        }
-    }
-    forEach(f)(state)
-    let ar = Array.from(m.entries());
+    let ar = Array.from(state.entries());
     ar.sort((a, b) => a[0].localeCompare(b[0]));
     return ar.map(([k,v]) => k + v).join();
 }
