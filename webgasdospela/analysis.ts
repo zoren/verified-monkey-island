@@ -36,6 +36,27 @@ export function getDeclsAsInitialState(story: lang.Story) {
     return initialState;
 }
 
+function stateToString(state: State){
+    let m = new Map<string, string>();
+    let f = (tup:[string, lang.Constant]) =>{
+        let v = m.get(tup[0]);
+        if(!v){
+            m.set(tup[0], tup[1].value)
+        }
+    }
+    forEach(f)(state)
+    let ar = Array.from(m.entries());
+    ar.sort((a, b) => a[0].localeCompare(b[0]));
+    return ar.map(([k,v]) => k + v).join();
+}
+
+class WorkItem {
+    public readonly stateString: string;
+    constructor(public readonly state: State, public readonly path: List<lang.Action>) {
+        this.stateString = stateToString(state);
+    }
+}
+
 export function findPath(givenState: State, rules: lang.Rule[], pred: (state: interpreter.State) => boolean) {
     function evalRec(state: State) {
         let s = lift(state);
@@ -49,21 +70,7 @@ export function findPath(givenState: State, rules: lang.Rule[], pred: (state: in
         }
     }
 
-    function stateToString(state: State){
-        let m = new Map<string, string>();
-        let f = (tup:[string, lang.Constant]) =>{
-            let v = m.get(tup[0]);
-            if(!v){
-                m.set(tup[0], tup[1].value)
-            }
-        }
-        forEach(f)(state)
-        let ar = Array.from(m.entries());
-        ar.sort((a, b) => a[0].localeCompare(b[0]));
-        return ar.map(([k,v]) => k + v).join();
-    }
-
-    let stack: {state: State, path: List<lang.Action>}[] = []
+    let stack: WorkItem[] = []
     let visitedStates: Set<string> = new Set();
 
     function evalNoRec(): List<lang.Action> | undefined {
@@ -73,7 +80,7 @@ export function findPath(givenState: State, rules: lang.Rule[], pred: (state: in
                 return;
             }
             let state = workItem.state;
-            let stateString = stateToString(state);
+            let stateString = workItem.stateString;
             if(visitedStates.has(stateString)){
                 continue;
             }
@@ -84,12 +91,12 @@ export function findPath(givenState: State, rules: lang.Rule[], pred: (state: in
             let availableActionRules = interpreter.getAvailableActionRules(s, rules);
             for (let actionRule of availableActionRules) {
                 let s2 = applyActionRule(state, actionRule, () => { });
-                stack.push({state: s2, path: new Cons(actionRule.action, workItem.path) } );
+                stack.push(new WorkItem(s2, new Cons(actionRule.action, workItem.path)));
             }
             visitedStates.add(stateString);
         }
     }
 
-    stack.push({state: givenState, path: Nil});
+    stack.push(new WorkItem(givenState, Nil));
     return evalNoRec();
 }
