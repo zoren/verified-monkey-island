@@ -9,13 +9,24 @@ let lift = (state: State) => (s: string) => {
     return c ? c.value : undefined;
 }
 
+export function evalInitial(s: Map<string, lang.Constant>, updates: lang.Update[]) {
+    updates.forEach((update) => {
+        s.set(update.name, update.constant)
+    });
+}
+
 function evalUpdatesCopy(s: State, updates: lang.Update[]): State {
     let sc = new Map(s);
-    updates.forEach((update) => sc.set(update.name, update.constant));
+    evalInitial(sc, updates);
     return sc;
 }
 
-function applyActionRule (state: State, rule: lang.ARule, sideEffectHandler: (se: lang.SideEffect) => void): State {
+export function applyActionRule (state: Map<string, lang.Constant>, rule: lang.ARule, sideEffectHandler: (se: lang.SideEffect) => void) {
+    sideEffectHandler(rule.sideEffect);    
+    rule.updates.map((upd) => state.set(upd.name, upd.constant));
+}
+
+function applyActionRuleCopy (state: State, rule: lang.ARule, sideEffectHandler: (se: lang.SideEffect) => void): State {
     sideEffectHandler(rule.sideEffect);
     return evalUpdatesCopy(state, rule.updates);
 }
@@ -43,7 +54,7 @@ class WorkItem {
     }
 }
 
-export function findPath(givenState: State, rules: lang.Rule[], pred: (state: interpreter.State) => boolean) {
+export function findPath(givenState: State, rules: lang.Rule[], pred: (state: interpreter.Store) => boolean) {
     let stack: WorkItem[] = [new WorkItem(givenState, Nil)];
     let visitedStates: Set<string> = new Set();
 
@@ -59,7 +70,7 @@ export function findPath(givenState: State, rules: lang.Rule[], pred: (state: in
         }
         let availableActionRules = interpreter.getAvailableActionRules(s, rules);
         for (let actionRule of availableActionRules) {
-            let newState = applyActionRule(state, actionRule, () => { });
+            let newState = applyActionRuleCopy(state, actionRule, () => { });
             let newWorkItem = new WorkItem(newState, new Cons(actionRule.action, workItem.path));
             if (!visitedStates.has(newWorkItem.stateString)) {
                 stack.push(newWorkItem);                

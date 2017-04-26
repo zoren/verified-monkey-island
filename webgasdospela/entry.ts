@@ -3,17 +3,6 @@ import * as parser from "./parser"
 import * as lang from "./lang"
 import * as interpreter from "./interpreter"
 
-function evalInitial(s: Map<string, lang.Constant>, updates: lang.Update[]) {
-    updates.forEach((update) => {
-        s.set(update.name, update.constant)
-    });
-}
-
-function applyActionRule (state: Map<string, lang.Constant>, rule: lang.ARule, sideEffectHandler: (se: lang.SideEffect) => void) {
-    rule.updates.map((upd) => state.set(upd.name, upd.constant));
-    sideEffectHandler(rule.sideEffect);
-}
-
 let liftState = (map: Map<string, lang.Constant>) => ( (v: string) => {
         let c = map.get(v);
         return c ? c.value : undefined;
@@ -33,7 +22,7 @@ export function loadStory() {
         let initialStateDecls = interpreter.getInitialStateDecls(story);
         let lState = liftState(currentState);
         for(let updates of initialStateDecls){
-            evalInitial(currentState, updates);
+            analysis.evalInitial(currentState, updates);
         }
 
         let current = <HTMLDivElement>document.getElementById("current-message");
@@ -59,7 +48,7 @@ export function loadStory() {
             dedub.forEach((actionRules, actionString) => {
                 let button = document.createElement("button");
                 button.innerText = actionString;
-                button.onclick = () => { actionRules.forEach((actionRule) => applyActionRule(currentState, actionRule, handler)); listAvailableActions() };
+                button.onclick = () => { actionRules.forEach((actionRule) => analysis.applyActionRule(currentState, actionRule, handler)); listAvailableActions() };
                 availableActions.appendChild(button);
                 availableActions.appendChild(document.createElement("br"));
             });
@@ -118,7 +107,7 @@ function getPredicate() {
         throw new Error("could not parse");
     }
     let comparisons = v.value;
-    return (s: interpreter.State) => interpreter.evalConds(s, comparisons);
+    return (s: interpreter.Store) => interpreter.evalConds(s, comparisons);
 }
 
 function getStory(){

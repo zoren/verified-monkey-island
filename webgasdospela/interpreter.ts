@@ -6,7 +6,7 @@ function concatMany<T>(arrays: T[][]): T[] {
     return res;
 }
 
-export type State = (string) => string | undefined
+export type Store = (string) => string | undefined
 
 function evalComp(compOp: lang.ComparisonOperator){
     switch(compOp){
@@ -17,7 +17,7 @@ function evalComp(compOp: lang.ComparisonOperator){
     }
 }
 
-export function evalConds(get: State, conds: lang.Condition[]){
+export function evalConds(get: Store, conds: lang.Condition[]){
     function evalCond(cond: lang.Condition) {
         let evalExp = (e: lang.Expression) => e instanceof lang.Constant ? e.value : get(e.name);
         let vl = evalExp(cond.expl);
@@ -28,7 +28,7 @@ export function evalConds(get: State, conds: lang.Condition[]){
     return conds.every(evalCond);
 }
 
-export function getAvailableActionRules(get: State, rules: lang.Rule[]): lang.ARule[] {
+export function getAvailableActionRules(get: Store, rules: lang.Rule[]): lang.ARule[] {
     function getAvailableActions(rule: lang.Rule): lang.ARule[] {
         if (rule instanceof lang.ARule) {
             return [rule];
