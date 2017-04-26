@@ -58,45 +58,27 @@ class WorkItem {
 }
 
 export function findPath(givenState: State, rules: lang.Rule[], pred: (state: interpreter.State) => boolean) {
-    function evalRec(state: State) {
-        let s = lift(state);
-        if(pred(s)){
-            throw new Error("found a path");
-        }
-        let availableActionRules = interpreter.getAvailableActionRules(s, rules);
-        for(let action of availableActionRules) {
-            let s2 = applyActionRule(state, action, () => {});
-            evalRec(s2);
-        }
-    }
-
-    let stack: WorkItem[] = []
+    let stack: WorkItem[] = [new WorkItem(givenState, Nil)];
     let visitedStates: Set<string> = new Set();
 
-    function evalNoRec(): List<lang.Action> | undefined {
-        while (true) {
-            let workItem = stack.pop();
-            if (!workItem) {
-                return;
-            }
-            let state = workItem.state;
-            let stateString = workItem.stateString;
-            if(visitedStates.has(stateString)){
-                continue;
-            }
-            let s = lift(state);
-            if (pred(s)) {
-                return workItem.path;
-            }
-            let availableActionRules = interpreter.getAvailableActionRules(s, rules);
-            for (let actionRule of availableActionRules) {
-                let s2 = applyActionRule(state, actionRule, () => { });
-                stack.push(new WorkItem(s2, new Cons(actionRule.action, workItem.path)));
-            }
-            visitedStates.add(stateString);
+    while (true) {
+        let workItem = stack.pop();
+        if (!workItem) {
+            return;
         }
+        if (visitedStates.has(workItem.stateString)) {
+            continue;
+        }
+        let state = workItem.state;
+        let s = lift(state);
+        if (pred(s)) {
+            return workItem.path;
+        }
+        let availableActionRules = interpreter.getAvailableActionRules(s, rules);
+        for (let actionRule of availableActionRules) {
+            let newState = applyActionRule(state, actionRule, () => { });
+            stack.push(new WorkItem(newState, new Cons(actionRule.action, workItem.path)));
+        }
+        visitedStates.add(workItem.stateString);
     }
-
-    stack.push(new WorkItem(givenState, Nil));
-    return evalNoRec();
 }
