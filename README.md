@@ -2,5 +2,6 @@
 
 ```
 cd webgasdospela/
+yarn install
 yarn run build
 ```
