@@ -82,28 +82,28 @@ export function findPath(story: lang.Story, pred: (state: interpreter.State) => 
         return ar.map(([k,v]) => k + v).join();
     }
 
-    let stack: State[] = []
+    let stack: {state: State, path: List<lang.Action>}[] = []
     let visitedStates: Set<string> = new Set();
 
-    function evalNoRec() {
+    function evalNoRec(): List<lang.Action> | undefined {
         while (true) {
-            let state = stack.pop();
-            if (!state) {
-                console.log("completed evaluation of stack");
+            let workItem = stack.pop();
+            if (!workItem) {
                 return;
             }
+            let state = workItem.state;
             let stateString = stateToString(state);
             if(visitedStates.has(stateString)){
                 continue;
             }
             let s = lift(state);
             if (pred(s)) {
-                return console.log("found a path");
+                return workItem.path;
             }
             let availableActionRules = interpreter.getAvailableActionRules(s, rules);
-            for (let action of availableActionRules) {
-                let s2 = applyActionRule(state, action, () => { });
-                stack.push(s2);
+            for (let actionRule of availableActionRules) {
+                let s2 = applyActionRule(state, actionRule, () => { });
+                stack.push({state: s2, path: new Cons(actionRule.action, workItem.path) } );
             }
             visitedStates.add(stateString);
         }
@@ -115,6 +115,6 @@ export function findPath(story: lang.Story, pred: (state: interpreter.State) => 
         initialState = evalUpdates(initialState, upd);
     }
 
-    stack.push(initialState);
-    evalNoRec();
+    stack.push({state: initialState, path: Nil});
+    return evalNoRec();
 }
