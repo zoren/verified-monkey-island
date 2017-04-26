@@ -107,7 +107,9 @@ export function analyse() {
     }
     let comparisons = v.value;
     let pred = (s: interpreter.State) => interpreter.evalConds(s, comparisons);
-    let foundPath = analysis.findPath(story, pred);
+    let initialState = analysis.getDeclsAsInitialState(story);
+    let rules = interpreter.getRulesDecls(story);
+    let foundPath = analysis.findPath(initialState, rules, pred);
     if(foundPath){
         let ar: lang.Action[] = [];
         list.forEach((a) => ar.push(a))(foundPath);

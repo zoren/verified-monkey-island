@@ -27,8 +27,16 @@ function printState(state: State){
     console.log("}");
 }
 
-export function findPath(story: lang.Story, pred: (state: interpreter.State) => boolean) {
-    let rules = interpreter.getRulesDecls(story);
+export function getDeclsAsInitialState(story: lang.Story) {
+    let initialDecls = interpreter.getInitialStateDecls(story);
+    let initialState: State = Nil;
+    for (let upd of initialDecls) {
+        initialState = evalUpdates(initialState, upd);
+    }
+    return initialState;
+}
+
+export function findPath(givenState: State, rules: lang.Rule[], pred: (state: interpreter.State) => boolean) {
     function evalRec(state: State) {
         let s = lift(state);
         if(pred(s)){
@@ -82,12 +90,6 @@ export function findPath(story: lang.Story, pred: (state: interpreter.State) => 
         }
     }
 
-    let initialDecls = interpreter.getInitialStateDecls(story);
-    let initialState: State = Nil;
-    for(let upd of initialDecls){
-        initialState = evalUpdates(initialState, upd);
-    }
-
-    stack.push({state: initialState, path: Nil});
+    stack.push({state: givenState, path: Nil});
     return evalNoRec();
 }
