@@ -1,33 +1,6 @@
+import { Nil, Cons, List, forEach, lookup} from "./list"
 import * as lang from "./lang"
 import * as interpreter from "./interpreter"
-
-class Nil{}
-
-class Cons<T>{
-    constructor(public readonly head: T, public readonly tail: List<T>) {}
-}
-
-type List<T> = Nil | Cons<T>
-
-function lookup<K, T>(k: K, list: List<[K, T]>) {
-    while(list instanceof Cons){
-        if(k === list.head[0]){
-            return list.head[1];
-        }
-        list = list.tail;
-    }
-}
-
-function forEach<T>(f: (T) => void) {
-    let rec =
-        (list: List<T>) => {
-            if (list instanceof Cons) {
-                f(list.head);
-                rec(list.tail);
-            }
-        }
-    return rec;
-}
 
 type State = List<[string, lang.Constant]>
 
