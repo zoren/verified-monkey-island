@@ -73,7 +73,7 @@ export function loadMI2part1() {
     let xhr = new XMLHttpRequest();
     xhr.open("GET", file);
     xhr.send();
-    xhr.onreadystatechange = ((ev) => { 
+    xhr.onload = ((ev) => { 
         if(xhr.status !== 200){
             throw new Error("could not find " + file);
         }
