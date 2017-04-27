@@ -1,3 +1,5 @@
+namespace AST
+
 type ActionName = string
 type Action = ActionName * string[]
 
