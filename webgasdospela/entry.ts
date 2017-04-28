@@ -3,11 +3,6 @@ import * as parser from "./parser"
 import * as lang from "./lang"
 import * as interpreter from "./interpreter"
 
-let liftState = (map: Map<string, lang.Constant>) => ( (v: string) => {
-        let c = map.get(v);
-        return c ? c.value : undefined;
-    });
-
 import * as analysis from "./analysis"
     
 let story: lang.Story | undefined;
@@ -20,7 +15,7 @@ export function loadStory() {
     if(result.status){
         story = result.value;
         let initialStateDecls = interpreter.getInitialStateDecls(story);
-        let lState = liftState(currentState);
+        let lState = analysis.lift(currentState);
         for(let updates of initialStateDecls){
             analysis.evalUpdates(currentState, updates);
         }

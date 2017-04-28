@@ -4,7 +4,7 @@ import * as interpreter from "./interpreter"
 
 export type State = Map<string, lang.Constant>
 
-let lift = (state: State) => (s: string) => {
+export let lift = (state: State) => (s: string) => {
     let c = state.get(s);
     return c ? c.value : undefined;
 }
