@@ -2,16 +2,13 @@ import { Nil, Cons, List, forEach, lookup} from "./list"
 import * as lang from "./lang"
 import * as interpreter from "./interpreter"
 
-export type State = Map<string, lang.Constant>
+export type State = Map<string, string>
 
-export let lift = (state: State) => (s: string) => {
-    let c = state.get(s);
-    return c ? c.value : undefined;
-}
+export let lift = (state: State) => (s: string) => state.get(s)
 
 export function evalUpdates(s: State, updates: lang.Update[]) {
     updates.forEach((update) => {
-        s.set(update.name, update.constant)
+        s.set(update.name, update.constant.value)
     });
 }
 
