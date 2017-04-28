@@ -91,6 +91,7 @@ function showPath(path: list.List<lang.Action>) {
     let ar: lang.Action[] = [];
     list.forEach((a) => ar.push(a))(path);
     ar.reverse();
+    console.log(`path is ${ar.length} long`);
     clearPathDisplay();
     let d = <HTMLTextAreaElement>document.getElementById("actions-textarea");        
     d.rows = ar.length;

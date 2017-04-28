@@ -54,6 +54,23 @@ class WorkItem {
     }
 }
 
+function shuffle<T>(array: T[]) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+}
+
 export function findPath(givenState: State, rules: lang.Rule[], pred: (state: interpreter.Store) => boolean) {
     let stack: WorkItem[] = [new WorkItem(givenState, Nil)];
     let visitedStates: Set<string> = new Set();
@@ -61,14 +78,17 @@ export function findPath(givenState: State, rules: lang.Rule[], pred: (state: in
     while (true) {
         let workItem = stack.pop();
         if (!workItem) {
+            console.log(`visited ${visitedStates.size} states`);
             return;
         }
         let state = workItem.state;
         let s = lift(state);
         if (pred(s)) {
+            console.log(`visited ${visitedStates.size} states`);
             return workItem.path;
         }
         let availableActionRules = interpreter.getAvailableActionRules(s, rules);
+        shuffle(availableActionRules);
         for (let actionRule of availableActionRules) {
             let newState = applyActionRuleCopy(state, actionRule, () => { });
             let newWorkItem = new WorkItem(newState, new Cons(actionRule.action, workItem.path));
