@@ -1,3 +1,5 @@
 #load "parser.fsx"
 open Parser
-printfn "%A" <| parseString """pickUp(shovel) >> {shovel.loc := Inv} & { "You pick up a shovel" }"""
+
+printfn "%A" <| parseFile "../webgasdospela/MI2part1.core"
+

@@ -58,12 +58,35 @@ let compOp =
         <|>
     (notEq >>% NEQ)
 
-let condition = tuple3 exp compOp exp
-
-let arule =
+let arule: Parser<Rule> =
     tuple3
         (action .>> gtgt)
         (inBraces updates)
-        (amp >>. inBraces(qt >>. manySatisfy ((<>)'\"') .>> qt))
+        (opt(amp >>. inBraces(qt >>. manySatisfy ((<>)'\"') .>> qt)))
+        |>> ARule
 
-let parseString str = run arule str
+let comparisons = sepBy(tuple3 exp compOp exp) comma
+
+let rule, ruleRef = createParserForwardedToRef<Rule, unit>()
+
+let getColumn = getPosition |>> (fun pos -> pos.Column)
+
+let TabSize = 4L
+
+let atNextTabStop = getPosition >>= (fun pos -> userStateSatisfies (fun curr -> curr = (pos.Column - TabSize)))
+
+let prule: Parser<Rule> =
+    getColumn .>>. inBraces comparisons .>> question
+        >>= (fun(startColumn, comps) ->
+                many1(getColumn >>= (fun col -> if col = startColumn + TabSize then rule else pzero))
+                    |>> (fun rules -> PRule(comps, rules)))
+
+do ruleRef := prule <|> arule
+
+let initialDecl = initial >>. inBraces updates |>> InitBlock
+
+let decl = attempt (initialDecl <|> (rule |>> Rule))
+let decls = (spaces >>. many decl .>> eof)
+
+let parseString str = run decls str
+let parseFile path = runParserOnFile decls () path System.Text.Encoding.UTF8
