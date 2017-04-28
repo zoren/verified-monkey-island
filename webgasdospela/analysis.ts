@@ -4,11 +4,20 @@ import * as interpreter from "./interpreter"
 
 export type State = Map<string, string>
 
-export let lift = (state: State) => (s: string) => state.get(s)
+export let lift = (state: State) => (s: string) => {
+    let v = state.get(s);
+    return v ? v : "Undefined";
+}
 
 export function evalUpdates(s: State, updates: lang.Update[]) {
     updates.forEach((update) => {
-        s.set(update.name, update.constant.value)
+        let v = update.constant.value;
+        if (v) {
+            s.set(update.name, v)
+        }
+        else {
+            s.delete(update.name);
+        }
     });
 }
 
