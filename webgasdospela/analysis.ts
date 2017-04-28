@@ -15,20 +15,16 @@ export function evalUpdates(s: State, updates: lang.Update[]) {
     });
 }
 
-function evalUpdatesCopy(s: State, updates: lang.Update[]): State {
-    let sc = new Map(s);
-    evalUpdates(sc, updates);
-    return sc;
-}
-
 export function applyActionRule (state: State, rule: lang.ARule, sideEffectHandler: (se: lang.SideEffect) => void) {
     sideEffectHandler(rule.sideEffect);    
-    rule.updates.map((upd) => state.set(upd.name, upd.constant));
+    evalUpdates(state, rule.updates);
 }
 
 function applyActionRuleCopy (state: State, rule: lang.ARule, sideEffectHandler: (se: lang.SideEffect) => void): State {
     sideEffectHandler(rule.sideEffect);
-    return evalUpdatesCopy(state, rule.updates);
+    let sc = new Map(state);
+    evalUpdates(sc, rule.updates);
+    return sc;
 }
 
 export function getDeclsAsInitialState(story: lang.Story) {
