@@ -4,16 +4,27 @@ import * as lang from "./lang"
 import * as interpreter from "./interpreter"
 
 import * as analysis from "./analysis"
+import * as infer from "./infer"
     
 let story: lang.Story | undefined;
 
 let currentState = new Map();
+
+function print(otmm: infer.OneToManyMap<string, string>){
+    for(let comp of otmm.keys()){
+        console.log(comp, otmm.get(comp));
+    }
+}
 
 export function loadStory() {
     let current = <HTMLTextAreaElement>document.getElementById("story-text");    
     var result = parser.story.parse(current.value);
     if(result.status){
         story = result.value;
+        let {compMap, updatesMap} = infer.getStoryDomains(story);
+        print(compMap);
+        print(updatesMap);
+
         let initialStateDecls = interpreter.getInitialStateDecls(story);
         let lState = analysis.lift(currentState);
         for(let updates of initialStateDecls){
