@@ -9,7 +9,7 @@ let lift = (state: State) => (s: string) => {
     return c ? c.value : undefined;
 }
 
-export function evalInitial(s: Map<string, lang.Constant>, updates: lang.Update[]) {
+export function evalUpdates(s: State, updates: lang.Update[]) {
     updates.forEach((update) => {
         s.set(update.name, update.constant)
     });
@@ -17,11 +17,11 @@ export function evalInitial(s: Map<string, lang.Constant>, updates: lang.Update[
 
 function evalUpdatesCopy(s: State, updates: lang.Update[]): State {
     let sc = new Map(s);
-    evalInitial(sc, updates);
+    evalUpdates(sc, updates);
     return sc;
 }
 
-export function applyActionRule (state: Map<string, lang.Constant>, rule: lang.ARule, sideEffectHandler: (se: lang.SideEffect) => void) {
+export function applyActionRule (state: State, rule: lang.ARule, sideEffectHandler: (se: lang.SideEffect) => void) {
     sideEffectHandler(rule.sideEffect);    
     rule.updates.map((upd) => state.set(upd.name, upd.constant));
 }
@@ -34,10 +34,7 @@ function applyActionRuleCopy (state: State, rule: lang.ARule, sideEffectHandler:
 export function getDeclsAsInitialState(story: lang.Story) {
     let initialDecls = interpreter.getInitialStateDecls(story);
     let initialState: State = new Map();
-    initialDecls.forEach((updates) =>
-        updates.forEach((update) =>
-            initialState.set(update.name, update.constant)
-        ));
+    initialDecls.forEach((updates) => evalUpdates(initialState, updates))
     return initialState;
 }
 

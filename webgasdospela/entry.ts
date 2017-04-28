@@ -22,7 +22,7 @@ export function loadStory() {
         let initialStateDecls = interpreter.getInitialStateDecls(story);
         let lState = liftState(currentState);
         for(let updates of initialStateDecls){
-            analysis.evalInitial(currentState, updates);
+            analysis.evalUpdates(currentState, updates);
         }
 
         let current = <HTMLDivElement>document.getElementById("current-message");
