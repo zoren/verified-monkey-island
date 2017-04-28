@@ -12,7 +12,7 @@ Initial { player.loc := WoodtickRight; riches.loc := Inv; shovel.loc := Woodtick
 
 { player.loc = WoodtickLeft } ?
     { largohasdirtyshirt = True } ?
-        walkto(laundry) >> {ticket.loc := Largosroom; largohasdirtyshirt := False; player.loc := LaundryShip} & { "You are at the laundry. Largo is talking to the laundry guy" }
+        walkto(laundry) >> {ticket.loc := Largosroom; largohasdirtyshirt := Undefined; player.loc := LaundryShip} & { "You are at the laundry. Largo is talking to the laundry guy" }
     walkto(wallyDoor) >> {player.loc := WallysShip} & { "You enter the cartographers ship" }
     walkto(laundry) >> {player.loc := LaundryShip} & { "You are at the laundry" }
     walkto(window) >> {player.loc := Kitchen} & { "You jump through the window very elegantly and fall into the kitchen of the Bloddylips Inn" }
@@ -98,9 +98,9 @@ Initial {hatch := Closed;
         use(string, stick) >> {hatch.stringed := True; string.loc := LaundryShip} & { "The string is now tied to the stick. The trap is ready!" }
     { rat.inbox = True } ?
         { hatch.stringed = True } ?
-            pull(string) >> {string.loc := Inv; stick.loc := Inv; rat.trapped := True; hatch.sticked := False; hatch.stringed := False; hatch := Closed} & { "Bum! The hatch closes and the rat is trapped." }
+            pull(string) >> {string.loc := Inv; stick.loc := Inv; rat.trapped := True; hatch.sticked := Undefined; hatch.stringed := Undefined; hatch := Closed} & { "Bum! The hatch closes and the rat is trapped." }
     { hatch = Open, rat.trapped = True } ?
-        pickUp(rat) >> {rat.loc := Inv; rat.trapped := False; hatch := Closed} & { "You pick up the rat from the box" }
+        pickUp(rat) >> {rat.loc := Inv; rat.trapped := Undefined; hatch := Closed} & { "You pick up the rat from the box" }
 
 Initial {monocle.loc := WallysShip;
             paper.loc := WallysShip}
@@ -160,7 +160,7 @@ Initial {pins.loc := VoodooShack;
         { toupee.loc = Inv } ?
             give(toupee, lady) >> {toupee.loc := VoodooShack} & { "You give the toupee to the lady" }
         { paper.hasspit = True } ?
-            give(paper, lady) >> {paper.hasspit := False; spit.loc := VoodooShack} & { "You give the spit-encrusted paper to the lady. You get to keep the paper without the spit" }
+            give(paper, lady) >> {paper.hasspit := Undefined; spit.loc := VoodooShack} & { "You give the spit-encrusted paper to the lady. You get to keep the paper without the spit" }
     { bones.loc = VoodooShack, bra.loc = VoodooShack, toupee.loc = VoodooShack, spit.loc = VoodooShack } ?
         talkto(lady, doll) >> {doll.loc := Inv; pins.loc := Inv; bones.loc := Undefined; bra.loc := Undefined; toupee.loc := Undefined; spit.loc := Undefined} & { "You now have the voodoodoll. Now just find Largo" }
     { largoembargo = Alleviated, bigWhoopBook.loc != Inv } ?
