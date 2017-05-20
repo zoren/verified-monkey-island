@@ -4,7 +4,9 @@
   "dependencies": {
     "@types/node": "^7.0.13",
     "@types/parsimmon": "^1.0.4",
-    "parsimmon": "^1.2.0"
+    "nmdd-builder": "file:../../NMDD/",
+    "parsimmon": "^1.2.0",
+    "typescript": "^2.3.2"
   },
   "scripts": {
     "build": "node_modules/webpack-dev-server/bin/webpack-dev-server.js"
