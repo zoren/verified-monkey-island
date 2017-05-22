@@ -1,0 +1,52 @@
+MODULE main
+VAR
+    player_loc: {WoodtickRight, Map, WoodtickLeft, LaundryShip, WallysShip, Kitchen, BloddyLips, Woodsmith, Inn};
+    riches_loc: {Inv, Undefined};
+    shovel_loc: {WoodtickRight, Inv};
+    hasbeenrobbed: {Undefined, True};
+    largohasdirtyshirt: {True, Undefined};
+    ticket_loc: {Largosroom, Undefined};
+ASSIGN
+    init(player_loc) := WoodtickRight;
+    init(riches_loc) := Inv;
+    init(shovel_loc) := WoodtickRight;
+    init(largohasdirtyshirt) := Undefined;
+    init(ticket_loc) := Undefined;
+    
+    -- pickUp(shovel)
+    next(shovel_loc) :=
+        case
+            player_loc = WoodtickRight & shovel_loc = WoodtickRight: Inv;
+            TRUE:shovel_loc;
+        esac;
+
+    -- walkto(path) AND walkto(bridge)
+    next(riches_loc) :=
+        case
+            player_loc = WoodtickRight & hasbeenrobbed != True: Undefined;
+            TRUE: riches_loc;            
+        esac;
+    next(hasbeenrobbed) :=
+        case
+            player_loc = WoodtickRight & hasbeenrobbed != True: True;
+            TRUE: hasbeenrobbed;
+        esac;
+    
+    -- walkto(laundry)
+    next(ticket_loc) :=
+        case
+            player_loc = WoodtickLeft & largohasdirtyshirt = True: Largosroom;
+            TRUE: ticket_loc;
+        esac;
+    next(largohasdirtyshirt) :=
+        case
+            player_loc = WoodtickLeft & largohasdirtyshirt = True: Undefined;
+            TRUE: largohasdirtyshirt;
+        esac;
+
+    next(player_loc) :=
+        case
+            player_loc = WoodtickRight & hasbeenrobbed = True: {Map, WoodtickLeft};        
+            player_loc = WoodtickLeft: {LaundryShip, WallysShip, Kitchen, BloddyLips, Woodsmith, Inn, WoodtickRight};
+            TRUE: player_loc;
+        esac;
