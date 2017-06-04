@@ -5,22 +5,22 @@ module AST =
     type ActionName = string
     type Action = ActionName * string list
 
-    type Update = string * string
+    type Update<'Var, 'Val> = 'Var * 'Val
 
-    type Exp =
-        | VariableDeref of string
-        | Constant of string
+    type Exp<'Var, 'Val> =
+        | VariableDeref of 'Var
+        | Constant of 'Val
 
     type SideEffect = string option
 
     type ComparisonOperator = EQ | NEQ
 
-    type Condition = Exp * ComparisonOperator * Exp
+    type Condition<'Var, 'Val> = Exp<'Var, 'Val> * ComparisonOperator * Exp<'Var, 'Val>
 
-    type Rule =
-        | ARule of Action * Update list * SideEffect
-        | PRule of Condition list * Rule list
+    type Rule<'Var, 'Val> =
+        | ARule of Action * Update<'Var, 'Val> list * SideEffect
+        | PRule of Condition<'Var, 'Val> list * Rule<'Var, 'Val> list
 
-    type Decl =
-        | InitBlock of Update list
-        | Rule of Rule
+    type Decl<'Var, 'Val> =
+        | InitBlock of Update<'Var, 'Val> list
+        | Rule of Rule<'Var, 'Val>

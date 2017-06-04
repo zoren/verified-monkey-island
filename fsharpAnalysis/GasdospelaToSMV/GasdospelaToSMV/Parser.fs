@@ -44,7 +44,7 @@ module GasdospelaParser =
 
     let action = var .>>. (inPars <| sepBy var comma)
 
-    let update: Parser<Update> = var .>> setEq .>>. ctor
+    let update: Parser<Update<string, string>> = var .>> setEq .>>. ctor
 
     let updates = sepBy update semiColon
 
@@ -58,7 +58,7 @@ module GasdospelaParser =
             <|>
         (notEq >>% NEQ)
 
-    let arule: Parser<Rule> =
+    let arule: Parser<Rule<string, string>> =
         tuple3
             (action .>> gtgt)
             (inBraces updates)
@@ -67,7 +67,7 @@ module GasdospelaParser =
 
     let comparisons = sepBy(tuple3 exp compOp exp) comma
 
-    let rule, ruleRef = createParserForwardedToRef<Rule, unit>()
+    let rule, ruleRef = createParserForwardedToRef<Rule<string, string>, unit>()
 
     let getColumn = getPosition |>> (fun pos -> pos.Column)
 
@@ -75,7 +75,7 @@ module GasdospelaParser =
 
     let atNextTabStop = getPosition >>= (fun pos -> userStateSatisfies (fun curr -> curr = (pos.Column - TabSize)))
 
-    let prule: Parser<Rule> =
+    let prule: Parser<Rule<string, string>> =
         getColumn .>>. inBraces comparisons .>> question
             >>= (fun(startColumn, comps) ->
                     many1(getColumn >>= (fun col -> if col = startColumn + TabSize then rule else pzero))
